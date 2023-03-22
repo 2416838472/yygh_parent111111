@@ -1,10 +1,10 @@
 package com.atguigu.yygh.hosp.controller;
 
 
+import com.atguigu.yygh.common.util.MD5;
 import com.atguigu.yygh.common.result.R;
 import com.atguigu.yygh.hosp.service.HospitalSetService;
 import com.atguigu.yygh.model.hosp.HospitalSet;
-import com.atguigu.yygh.vo.hosp.HospitalQueryVo;
 import com.atguigu.yygh.vo.hosp.HospitalSetQueryVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * <p>
@@ -75,9 +76,16 @@ public class HospitalSetController {
     @ApiOperation(value = "添加医院")
     @PostMapping("saveHospSet")
     public R saveHospSet(@RequestBody HospitalSet hospitalSet) {
+       //设置状态
+        hospitalSet.setStatus(1);
+        //自定义生成签名密钥，并使用MD5加密
+        Random random = new Random();
+        hospitalSet.setSignKey
+                (MD5.encrypt(System.currentTimeMillis()
+                        + "" + random.nextInt(1000)));
         //调用service方法
-        boolean flag = hospitalSetService.save(hospitalSet);
-        if (flag) {
+        boolean save = hospitalSetService.save(hospitalSet);
+        if (save) {
             return R.ok().message("添加成功");
         } else {
             return R.error().message("添加失败");
@@ -111,19 +119,41 @@ public class HospitalSetController {
     @DeleteMapping("batchRemove")
     public R batchRemoveHospSet(@RequestBody List<Long> idList) {
         //调用service方法
-        hospitalSetService.removeByIds(idList);
-        return R.ok().message("删除成功");
+        boolean b = hospitalSetService.removeByIds(idList);
+        if (b) {
+            return R.ok().message("删除成功");
+        } else {
+            return R.error().message("删除失败");
+        }
     }
 
-    //锁定签名
-    @ApiOperation(value = "锁定签名")
-    @PutMapping("lockHospSet/{id}/{status}")
-    public R lockHospSet(@PathVariable Long id, @PathVariable Integer status) {
+
+    //设置状态
+    @ApiOperation(value = "设置状态")
+    @PutMapping("status/{id}/{status}")
+    public R status(@PathVariable Long id, @PathVariable Integer status) {
         //调用service方法
         HospitalSet hospitalSet = hospitalSetService.getById(id);
         hospitalSet.setStatus(status);
-        hospitalSetService.updateById(hospitalSet);
-        return R.ok().message("修改成功");
+        boolean b = hospitalSetService.updateById(hospitalSet);
+        if (b) {
+            return R.ok().message("修改成功");
+        } else {
+            return R.error().message("修改失败");
+        }
     }
+
+    //发送签名秘钥
+    @ApiOperation(value = "发送签名秘钥")
+    @PutMapping("sendKey/{id}")
+    public R sendKey(@PathVariable Long id) {
+        //调用service方法
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        String signKey = hospitalSet.getSignKey();
+        String hoscode = hospitalSet.getHoscode();
+        //TODO 发送短信
+        return R.ok().message("发送成功");
+    }
+
 }
 
