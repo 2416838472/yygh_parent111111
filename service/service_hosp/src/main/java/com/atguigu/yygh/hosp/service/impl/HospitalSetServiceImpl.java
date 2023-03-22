@@ -3,9 +3,15 @@ package com.atguigu.yygh.hosp.service.impl;
 import com.atguigu.yygh.model.hosp.HospitalSet;
 import com.atguigu.yygh.hosp.mapper.HospitalSetMapper;
 import com.atguigu.yygh.hosp.service.HospitalSetService;
+import com.atguigu.yygh.vo.hosp.HospitalQueryVo;
+import com.atguigu.yygh.vo.hosp.HospitalSetQueryVo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -19,4 +25,14 @@ import org.springframework.stereotype.Service;
 public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper, HospitalSet> implements HospitalSetService {
 
 
+    @Resource
+    private HospitalSetMapper hospitalSetMapper;
+    @Override
+    public Page<HospitalSet> selectHospPage(Page<HospitalSet> pageParam, HospitalSetQueryVo hospitalSetQueryVo) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.like("hosname", hospitalSetQueryVo.getHosname());
+        wrapper.eq("hoscode", hospitalSetQueryVo.getHoscode());
+        Page<HospitalSet> page = hospitalSetMapper.selectPage(pageParam, wrapper);
+        return page;
+    }
 }
