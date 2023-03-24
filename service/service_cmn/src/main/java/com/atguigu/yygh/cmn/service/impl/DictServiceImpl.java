@@ -1,12 +1,17 @@
 package com.atguigu.yygh.cmn.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.atguigu.model.cmn.Dict;
 import com.atguigu.vo.cmn.DictEeVo;
+import com.atguigu.yygh.cmn.listener.DictListener;
 import com.atguigu.yygh.cmn.mapper.DictMapper;
 import com.atguigu.yygh.cmn.service.DictService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +31,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     private DictMapper dictMapper;
 
     @Override
+    @Cacheable(value = "dict", key = "keyGenerator")
     public List<Dict> findChildData(Long id) {
         return dictMapper.findChildData(id);
     }
@@ -54,20 +60,23 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             dictEeVos.add(dictEeVo);
         }
         //调用方法实现写操作
-        //引入之后无法生效
-//        try {
-//            EasyExcel.write(response.getOutputStream(), DictEeVo.class).sheet("数据字典").doWrite(dictEeVos);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            EasyExcel.write(response.getOutputStream(),
+                    DictEeVo.class).sheet("数据字典").doWrite(dictEeVos);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    //导入数字字典
     @Override
-    public void importData() {
-//        try {
-//            EasyExcel.read(file.getInputStream(), DictEeVo.class, dictListener).she
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    @CacheEvict(value = "dict", allEntries = true)
+    public void importData(MultipartFile file) {
+        try {
+            EasyExcel.read(file.getInputStream(),
+                    DictEeVo.class, new DictListener(baseMapper)).sheet().doRead();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

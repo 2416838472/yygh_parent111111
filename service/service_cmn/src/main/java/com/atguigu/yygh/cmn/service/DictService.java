@@ -2,6 +2,7 @@ package com.atguigu.yygh.cmn.service;
 
 import com.atguigu.model.cmn.Dict;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -24,5 +25,6 @@ public interface DictService extends IService<Dict> {
 
     void exportData(HttpServletResponse response);
 
-    void importData();
+
+    void importData(MultipartFile file);
 }

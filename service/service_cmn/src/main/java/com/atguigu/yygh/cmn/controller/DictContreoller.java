@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.Cacheable;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -31,8 +33,8 @@ public class DictContreoller {
 
     //导入数据字典接口
     @GetMapping("importData")
-    public R importData(){
-        dictService.importData();
+    public R importData(MultipartFile file){
+        dictService.importData(file);
         return R.ok();
     }
 

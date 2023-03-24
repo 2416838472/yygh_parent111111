@@ -1,5 +1,7 @@
 package com.atguigu.yygh.cmn.listener;
 
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
 import com.atguigu.model.cmn.Dict;
 import com.atguigu.vo.cmn.DictEeVo;
 import com.atguigu.yygh.cmn.mapper.DictMapper;
@@ -10,8 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class DictListener extends AnalysisEventListener<DictEeVo> {
 
-    @Autowired
     private DictMapper dictMapper;
+    public DictListener(DictMapper dictMapper) {
+        this.dictMapper = dictMapper;
+    }
 
     //一行一行读取
     @Override
