@@ -1,8 +1,7 @@
 package com.atguigu.yygh.hosp.service;
 
-import com.atguigu.yygh.model.hosp.HospitalSet;
-import com.atguigu.yygh.vo.hosp.HospitalQueryVo;
-import com.atguigu.yygh.vo.hosp.HospitalSetQueryVo;
+import com.atguigu.model.hosp.HospitalSet;
+import com.atguigu.vo.hosp.HospitalSetQueryVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 

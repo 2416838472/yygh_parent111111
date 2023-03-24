@@ -1,11 +1,11 @@
 package com.atguigu.yygh.hosp.controller;
 
 
-import com.atguigu.yygh.common.util.MD5;
-import com.atguigu.yygh.common.result.R;
+import com.atguigu.yygh.util.MD5;
+import com.atguigu.yygh.result.R;
 import com.atguigu.yygh.hosp.service.HospitalSetService;
-import com.atguigu.yygh.model.hosp.HospitalSet;
-import com.atguigu.yygh.vo.hosp.HospitalSetQueryVo;
+import com.atguigu.model.hosp.HospitalSet;
+import com.atguigu.vo.hosp.HospitalSetQueryVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -101,13 +101,13 @@ public class HospitalSetController {
         return R.ok().data("item", hospitalSet);
     }
 
-    //修改医院设置
+       //修改医院设置
     @ApiOperation(value = "修改医院设置")
     @PutMapping("updateHospSet")
     public R updateHospSet(@RequestBody HospitalSet hospitalSet) {
         //调用service方法
-        boolean flag = hospitalSetService.updateById(hospitalSet);
-        if (flag) {
+        boolean b = hospitalSetService.updateById(hospitalSet);
+        if (b) {
             return R.ok().message("修改成功");
         } else {
             return R.error().message("修改失败");
@@ -153,6 +153,21 @@ public class HospitalSetController {
         String hoscode = hospitalSet.getHoscode();
         //TODO 发送短信
         return R.ok().message("发送成功");
+    }
+
+    //医院设置锁定和解锁
+    @ApiOperation(value = "医院设置锁定和解锁")
+    @PutMapping("lockHospitalSet/{id}/{status}")
+    public R lockHospitalSet(@PathVariable Long id, @PathVariable Integer status) {
+        //调用service方法
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        hospitalSet.setStatus(status);
+        boolean b = hospitalSetService.updateById(hospitalSet);
+        if (b) {
+            return R.ok().message("修改成功");
+        } else {
+            return R.error().message("修改失败");
+        }
     }
 
 }
