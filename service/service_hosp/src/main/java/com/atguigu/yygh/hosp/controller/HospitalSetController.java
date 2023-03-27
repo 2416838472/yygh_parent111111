@@ -72,6 +72,8 @@ public class HospitalSetController {
         return R.ok().data("total", total).data("rows", records);
     }
 
+
+
     //添加医院
     @ApiOperation(value = "添加医院")
     @PostMapping("saveHospSet")
@@ -101,7 +103,8 @@ public class HospitalSetController {
         return R.ok().data("item", hospitalSet);
     }
 
-       //修改医院设置
+
+    //修改医院设置
     @ApiOperation(value = "修改医院设置")
     @PutMapping("updateHospSet")
     public R updateHospSet(@RequestBody HospitalSet hospitalSet) {
@@ -154,6 +157,23 @@ public class HospitalSetController {
         //TODO 发送短信
         return R.ok().message("发送成功");
     }
+
+    //q:如何使用阿里云短信服务，并引入到发送签名密钥接口当中
+    //a:1.引入阿里云短信服务的依赖
+    //2.在阿里云短信服务中创建签名和模板
+    //3.在阿里云短信服务中获取accessKeyId和accessKeySecret
+    //4.在application.yml中配置accessKeyId和accessKeySecret
+    //5.在发送短信的接口中注入阿里云短信服务的工具类
+    //6.调用阿里云短信服务的工具类发送短信
+    //7.在阿里云短信服务中配置回调地址
+    //8.在阿里云短信服务中配置短信签名和模板
+
+    //q:阿里云短信服务依赖是什么，用pom.xml引入
+    //a:aliyun-java-sdk-core
+
+
+
+
 
     //医院设置锁定和解锁
     @ApiOperation(value = "医院设置锁定和解锁")

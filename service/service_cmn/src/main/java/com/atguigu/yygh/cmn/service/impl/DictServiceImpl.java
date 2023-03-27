@@ -30,6 +30,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Resource
     private DictMapper dictMapper;
 
+
     @Override
     @Cacheable(value = "dict", key = "keyGenerator")
     public List<Dict> findChildData(Long id) {
@@ -79,4 +80,8 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             e.printStackTrace();
         }
     }
+
+
+
+
 }
