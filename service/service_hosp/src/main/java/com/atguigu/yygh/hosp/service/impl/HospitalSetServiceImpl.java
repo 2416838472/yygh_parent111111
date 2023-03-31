@@ -33,4 +33,12 @@ public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper, Hospi
         Page<HospitalSet> page = hospitalSetMapper.selectPage(pageParam, wrapper);
         return page;
     }
+
+    @Override
+    public HospitalSet getByHoscode(String hoscode) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("hoscode", hoscode);
+        HospitalSet hospitalSet = hospitalSetMapper.selectOne(wrapper);
+        return hospitalSet;
+    }
 }

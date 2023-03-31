@@ -25,6 +25,7 @@ public class DictContreoller {
     private DictService dictService;
 
     //导出数据字典接口
+    @ApiOperation(value = "导出数据字典")
     @GetMapping("exportData")
     public R exportData(HttpServletResponse response){
         dictService.exportData(response);
@@ -32,6 +33,7 @@ public class DictContreoller {
     }
 
     //导入数据字典接口
+    @ApiOperation(value = "导入数据字典")
     @GetMapping("importData")
     public R importData(MultipartFile file){
         dictService.importData(file);
