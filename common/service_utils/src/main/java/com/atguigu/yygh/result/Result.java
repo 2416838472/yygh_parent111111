@@ -1,5 +1,6 @@
 package com.atguigu.yygh.result;
 
+import com.atguigu.enums.ResultCodeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

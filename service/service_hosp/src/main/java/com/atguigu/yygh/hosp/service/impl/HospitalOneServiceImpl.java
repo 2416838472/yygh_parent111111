@@ -44,4 +44,13 @@ public class HospitalOneServiceImpl implements HospitalOneService {
         }
 
     }
+
+    @Override
+    public Hospital getHosp(Map<String, Object> parmMap) {
+        String hoscode = (String) parmMap.get("hoscode");
+        Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
+        return hospital;
+    }
+
+
 }
