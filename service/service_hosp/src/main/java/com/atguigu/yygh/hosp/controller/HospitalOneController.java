@@ -51,6 +51,10 @@ public class HospitalOneController {
         if(!MD5.encrypt(KeyMd5).equals(sign)){
             throw new YyghException(ResultCodeEnum.SIGN_ERROR);
         }
+        //传输过程中“+”转换为了“ ”，因此我们要转换回来
+        String logoData = (String)parmMap.get("logoData");
+        logoData = logoData.replaceAll(" ","+");
+        parmMap.put("logoData",logoData);
         hospitalOneService.save(parmMap);
         return Result.ok();
     }
