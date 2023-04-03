@@ -1,11 +1,11 @@
 package com.atguigu.yygh.hosp.controller;
 
 
-import com.atguigu.yygh.util.MD5;
-import com.atguigu.yygh.result.R;
-import com.atguigu.yygh.hosp.service.HospitalSetService;
 import com.atguigu.model.hosp.HospitalSet;
 import com.atguigu.vo.hosp.HospitalSetQueryVo;
+import com.atguigu.yygh.hosp.service.HospitalSetService;
+import com.atguigu.yygh.result.R;
+import com.atguigu.yygh.util.MD5;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -34,6 +35,7 @@ public class HospitalSetController {
         List<HospitalSet> list = hospitalSetService.list();
         return R.ok().data("list", list);
     }
+
 
     //医院设置删除
     @ApiOperation(value = "医院设置删除")
@@ -72,6 +74,8 @@ public class HospitalSetController {
     public R saveHospSet(@RequestBody HospitalSet hospitalSet) {
         //设置状态
         hospitalSet.setStatus(1);
+        hospitalSet.setCreateTime(new Date());
+        hospitalSet.setUpdateTime(new Date());
         //自定义生成签名密钥，并使用MD5加密
         Random random = new Random();
         hospitalSet.setSignKey
@@ -166,23 +170,24 @@ public class HospitalSetController {
     //a:aliyun-java-sdk-core
 
 
-
-
-
     //医院设置锁定和解锁
     @ApiOperation(value = "医院设置锁定和解锁")
     @PutMapping("lockHospitalSet/{id}/{status}")
     public R lockHospitalSet(@PathVariable Long id, @PathVariable Integer status) {
-        //调用service方法
-        HospitalSet hospitalSet = hospitalSetService.getById(id);
-        hospitalSet.setStatus(status);
-        boolean b = hospitalSetService.updateById(hospitalSet);
-        if (b) {
-            return R.ok().message("修改成功");
+
+        if (status != 1 && status != 0) {
+            return R.error().message("状态值不正确");
         } else {
-            return R.error().message("修改失败");
+            //调用service方法
+            HospitalSet hospitalSet = hospitalSetService.getById(id);
+            hospitalSet.setStatus(status);
+            boolean b = hospitalSetService.updateById(hospitalSet);
+            if (b) {
+                return R.ok().message("修改成功");
+            } else {
+                return R.error().message("修改失败");
+            }
         }
     }
-
 }
 

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -28,8 +29,13 @@ public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper, Hospi
     @Override
     public Page<HospitalSet> selectHospPage(Page<HospitalSet> pageParam, HospitalSetQueryVo hospitalSetQueryVo) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.like("hosname", hospitalSetQueryVo.getHosname());
-        wrapper.eq("hoscode", hospitalSetQueryVo.getHoscode());
+        if(!StringUtils.isEmpty(hospitalSetQueryVo.getHosname())
+                && !StringUtils.isEmpty(hospitalSetQueryVo.getHoscode())
+        ){
+            wrapper.like("hosname", hospitalSetQueryVo.getHosname());
+            wrapper.eq("hoscode", hospitalSetQueryVo.getHoscode());
+        }
+
         Page<HospitalSet> page = hospitalSetMapper.selectPage(pageParam, wrapper);
         return page;
     }

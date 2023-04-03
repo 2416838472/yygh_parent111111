@@ -85,7 +85,7 @@ public class HospitalOneController {
         String KeyMd5 = MD5.encrypt(hospitalSet);
         //4根据签名，进行签名校验
         if (!KeyMd5.equals(sign)) {
-            new YyghException(20001, "签名错误");
+           throw  new YyghException(20001, "签名错误");
         }
 
         //传输过程中“+”转换为了“ ”，因此我们要转换回来
@@ -114,7 +114,7 @@ public class HospitalOneController {
         String KeyMd5 = MD5.encrypt(hospitalSet);
         //4根据签名，进行签名校验
         if (!KeyMd5.equals(sign)) {
-            new YyghException(20001, "签名错误");
+            throw new YyghException(20001, "签名错误");
         }
 
         departmentService.saveDepartment(parmMap);
@@ -172,7 +172,7 @@ public class HospitalOneController {
         String KeyMd5 = MD5.encrypt(hospitalSet);
         //4根据签名，进行签名校验
         if (!KeyMd5.equals(sign)) {
-            new YyghException(20001, "签名错误");
+            throw new YyghException(20001, "签名错误");
         }
 
         saveSchedule.saveSchedule(parmMap);

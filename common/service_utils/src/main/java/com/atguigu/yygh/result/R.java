@@ -63,8 +63,9 @@ public class R {
         return this;
     }
 
+    //链式编程
     public R code(Integer code){
-        this.setCode(code);
+        this.setCode(code); //this指向当前对象,当前对象是R,所以可以调用R的方法
         return this;
     }
 

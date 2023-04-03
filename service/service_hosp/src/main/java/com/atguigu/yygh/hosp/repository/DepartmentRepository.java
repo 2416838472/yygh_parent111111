@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+
+
 public interface DepartmentRepository extends MongoRepository<Department,String> {
     Department getDepartmentByHoscodeAndDepcode(String hoscode, String depcode);
 
