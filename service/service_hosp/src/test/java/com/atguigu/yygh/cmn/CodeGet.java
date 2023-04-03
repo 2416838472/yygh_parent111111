@@ -22,7 +22,7 @@ public class CodeGet {
         String projectPath = System.getProperty("user.dir");
         //gc.setOutputDir(projectPath + "/src/main/java");
 
-        gc.setOutputDir("C:\\Users\\zewan\\Desktop\\guli\\yygh_parent\\service\\service_hosp"+"/src/main/java");
+        gc.setOutputDir("D:\\dream3\\yygh_parent\\service\\service_hosp"+"/src/main/java"); //生成文件的输出目录
 
         gc.setServiceName("%sService");	//去掉Service接口的首字母I
         gc.setAuthor("atguigu");

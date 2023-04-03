@@ -10,26 +10,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Random;
 
-/**
- * <p>
- * 医院设置表 前端控制器
- * </p>
- *
- * @author atguigu
- * @since 2021-08-26
- */
+
 @Api(tags = "医院设置接口")
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
 public class HospitalSetController {
 
-    @Autowired
+    @Resource
     private HospitalSetService hospitalSetService;
 
     //http://localhost:8201/admin/hosp/hospitalSet/findAll
@@ -73,12 +66,11 @@ public class HospitalSetController {
     }
 
 
-
     //添加医院
     @ApiOperation(value = "添加医院")
     @PostMapping("saveHospSet")
     public R saveHospSet(@RequestBody HospitalSet hospitalSet) {
-       //设置状态
+        //设置状态
         hospitalSet.setStatus(1);
         //自定义生成签名密钥，并使用MD5加密
         Random random = new Random();
@@ -147,16 +139,18 @@ public class HospitalSetController {
     }
 
     //发送签名秘钥
-    @ApiOperation(value = "发送签名秘钥")
-    @PutMapping("sendKey/{id}")
-    public R sendKey(@PathVariable Long id) {
-        //调用service方法
-        HospitalSet hospitalSet = hospitalSetService.getById(id);
-        String signKey = hospitalSet.getSignKey();
-        String hoscode = hospitalSet.getHoscode();
-        //TODO 发送短信
-        return R.ok().message("发送成功");
-    }
+//    @ApiOperation(value = "发送签名秘钥")
+//    @PutMapping("sendKey/{id}")
+//    public R sendKey(@PathVariable Long id) {
+//        //调用service方法
+////        HospitalSet hospitalSet = hospitalSetService.getById(id);
+////        String signKey = hospitalSet.getSignKey();
+////        String hoscode = hospitalSet.getHoscode();
+////        //TODO   发送短信
+////        return R.ok().message("发送成功");
+//        return null;
+//    }
+
 
     //q:如何使用阿里云短信服务，并引入到发送签名密钥接口当中
     //a:1.引入阿里云短信服务的依赖
@@ -168,7 +162,7 @@ public class HospitalSetController {
     //7.在阿里云短信服务中配置回调地址
     //8.在阿里云短信服务中配置短信签名和模板
 
-    //q:阿里云短信服务依赖是什么，用pom.xml引入
+    //q:阿里云短信服务依赖是什么，用pom .xml引入
     //a:aliyun-java-sdk-core
 
 
