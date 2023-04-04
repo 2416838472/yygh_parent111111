@@ -10,5 +10,6 @@
 
 
     <artifactId>service-cmn-client</artifactId>
+    <packaging>pom</packaging>
 
 </project>

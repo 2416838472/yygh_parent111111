@@ -5,6 +5,7 @@ import com.atguigu.model.hosp.Department;
 import com.atguigu.model.hosp.Hospital;
 import com.atguigu.model.hosp.Schedule;
 import com.atguigu.vo.hosp.DepartmentQueryVo;
+import com.atguigu.vo.hosp.DepartmentVo;
 import com.atguigu.vo.hosp.ScheduleQueryVo;
 import com.atguigu.yygh.exception.YyghException;
 import com.atguigu.yygh.helper.HttpRequestHelper;
@@ -20,10 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 
@@ -219,5 +223,84 @@ public class HospitalOneController {
         saveSchedule.remove(hoscode, hosScheduleId);
         return Result.ok();
     }
+
+    //根据医院名称查询
+    @ApiOperation(value = "根据医院名称查询")
+    @GetMapping("findByHosname/{hosname}")
+    public Result findByHosname(@PathVariable String hosname) {
+        List<Hospital> list = hospitalOneService.findByHosname(hosname);
+        return Result.ok(list);
+    }
+
+
+    //根据医院编号获取科室
+    @ApiOperation(value = "根据医院编号获取科室")
+    @GetMapping("department/{hoscode}")
+    public Result index(@PathVariable String hoscode) {
+        List<DepartmentVo> list = departmentService.findDeptTree(hoscode);
+        return Result.ok(list);
+    }
+
+    //根据医院编号获取医院预约挂号详情
+    @ApiOperation(value = "根据医院编号获取医院预约挂号详情")
+    @GetMapping("findHospDetail/{hoscode}")
+    public Result item(@PathVariable String hoscode) {
+        Map<String, Object> map = hospitalOneService.item(hoscode);
+        return Result.ok(map);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 

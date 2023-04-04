@@ -30,6 +30,7 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     @Autowired
     private DictFeignClient dictFeignClient;
 
+
     @Override
     public void save(Map<String, Object> parmMap) {
         //把参数map集合转换对象
@@ -129,6 +130,27 @@ public class HospitalOneServiceImpl implements HospitalOneService {
         return null;
     }
 
+    //根据医院名称模糊查询
+    @Override
+    public List<Hospital> findByHosname(String hosname) {
+        //创建mapper 实现
+//        QueryWrapper wrapper = new QueryWrapper();
+//        wrapper.like("hosname",hosname);
+//        return .selectList(wrapper);
+        return hospitalRepository.findHospitalByHosnameLike(hosname);
+    }
+
+    @Override
+    public Map<String, Object> item(String hoscode) {
+        Map<String,Object> result = new HashMap<>();
+        Hospital hospital = this.setHospitalHosType(hospitalRepository.getHospitalByHoscode(hoscode));
+        result.put("hospital",hospital);
+        result.put("bookingRule",hospital.getBookingRule());
+
+        hospital.setBookingRule(null);
+
+        return result;
+    }
 
     private Hospital setHospitalHosType(Hospital hospital) {
         String hostype = dictFeignClient.getName("Hostype", hospital.getHostype());

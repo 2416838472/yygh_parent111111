@@ -11,6 +11,9 @@
 
 	<artifactId>service_client</artifactId>
 	<packaging>pom</packaging>
+	<modules>
+		<module>service-cmn-client</module>
+	</modules>
 
 
 	<dependencies>
