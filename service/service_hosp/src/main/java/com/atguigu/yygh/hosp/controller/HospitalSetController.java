@@ -143,17 +143,16 @@ public class HospitalSetController {
     }
 
     //发送签名秘钥
-//    @ApiOperation(value = "发送签名秘钥")
-//    @PutMapping("sendKey/{id}")
-//    public R sendKey(@PathVariable Long id) {
-//        //调用service方法
-////        HospitalSet hospitalSet = hospitalSetService.getById(id);
-////        String signKey = hospitalSet.getSignKey();
-////        String hoscode = hospitalSet.getHoscode();
-////        //TODO   发送短信
-////        return R.ok().message("发送成功");
-//        return null;
-//    }
+    @ApiOperation(value = "发送签名秘钥")
+    @PutMapping("sendKey/{id}")
+    public R sendKey(@PathVariable Long id) {
+        //调用service方法
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        String signKey = hospitalSet.getSignKey();
+        String hoscode = hospitalSet.getHoscode();
+        //TODO   发送短信
+        return R.ok().message("发送成功");
+    }
 
 
     //q:如何使用阿里云短信服务，并引入到发送签名密钥接口当中

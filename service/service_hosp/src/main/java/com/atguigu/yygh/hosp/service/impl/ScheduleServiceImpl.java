@@ -5,7 +5,6 @@ import com.atguigu.model.hosp.Schedule;
 import com.atguigu.vo.hosp.ScheduleQueryVo;
 import com.atguigu.yygh.hosp.repository.ScheduleRepository;
 import com.atguigu.yygh.hosp.service.ScheduleService;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -60,9 +59,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         //创建实例
         Example<Schedule> example = Example.of(schedule, matcher);
-        Page<Schedule> pages = scheduleRepository.findAll1(example, pageable);
+        Page<Schedule> pages = scheduleRepository.findAll(example, pageable);
         return pages;
     }
+
 
     @Override
     public void remove(String hoscode, String hosScheduleId) {

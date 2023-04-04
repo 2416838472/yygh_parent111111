@@ -2,7 +2,7 @@ package com.atguigu.yygh.hosp.service;
 
 import com.atguigu.model.hosp.Department;
 import com.atguigu.vo.hosp.DepartmentQueryVo;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.data.domain.Page;
 
 import java.util.Map;
 

@@ -8,6 +8,9 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>
  * Hospital
@@ -65,6 +68,9 @@ public class Hospital extends BaseMongoEntity {
 	public void setBookingRule(String bookingRule) {
 		this.bookingRule = JSONObject.parseObject(bookingRule, BookingRule.class);
 	}
+
+	@ApiModelProperty(value = "其他参数")
+	private Map<String,Object> param = new HashMap<>();
 
 }
 

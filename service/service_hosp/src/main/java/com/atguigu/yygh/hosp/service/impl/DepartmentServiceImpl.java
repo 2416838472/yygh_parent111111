@@ -5,12 +5,9 @@ import com.atguigu.model.hosp.Department;
 import com.atguigu.vo.hosp.DepartmentQueryVo;
 import com.atguigu.yygh.hosp.repository.DepartmentRepository;
 import com.atguigu.yygh.hosp.service.DepartmentService;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -55,7 +52,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public Page<Department> selectPage(int page, int limit, DepartmentQueryVo departmentQueryVo) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
         //0为第一页
-        Page<Department> pageParam = new Page<>(page - 1, limit);
+        Pageable pageable = PageRequest.of(page-1, limit, sort);
 
         Department department = new Department();
         BeanUtils.copyProperties(departmentQueryVo, department);
@@ -68,7 +65,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         //创建实例
         Example<Department> example = Example.of(department, matcher);
-        Page<Department> pages = departmentRepository.findAll(example, pageParam);
+        Page<Department> pages = departmentRepository.findAll(example,pageable);
         return pages;
     }
 

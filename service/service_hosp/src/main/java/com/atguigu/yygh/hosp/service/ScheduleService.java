@@ -2,7 +2,7 @@ package com.atguigu.yygh.hosp.service;
 
 import com.atguigu.model.hosp.Schedule;
 import com.atguigu.vo.hosp.ScheduleQueryVo;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.data.domain.Page;
 
 import java.util.Map;
 

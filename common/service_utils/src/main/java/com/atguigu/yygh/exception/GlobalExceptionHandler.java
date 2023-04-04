@@ -24,6 +24,12 @@ public class GlobalExceptionHandler {
         return R.error().message("执行特定异常处理");
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public R error(NullPointerException e) {
+        e.printStackTrace();
+        return R.error().message("空指针异常");
+    }
+
     @ExceptionHandler(YyghException.class)
     public R error(YyghException e) {
         log.error(e.getMessage());

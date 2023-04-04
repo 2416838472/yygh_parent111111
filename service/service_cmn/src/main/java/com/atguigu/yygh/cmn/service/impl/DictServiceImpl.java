@@ -6,11 +6,13 @@ import com.atguigu.vo.cmn.DictEeVo;
 import com.atguigu.yygh.cmn.listener.DictListener;
 import com.atguigu.yygh.cmn.mapper.DictMapper;
 import com.atguigu.yygh.cmn.service.DictService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -79,5 +81,33 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getName(String dictCode, String value) {
+        //如果dictCode为空，直接根据value查询
+        if(StringUtils.isEmpty(dictCode)){
+            Dict dict =
+                    this.getOne(new QueryWrapper<Dict>()
+                            .eq("value", value));
+            return dict.getName();
+        }else {
+            //根据dictcode查询dict对象，得到dict对象的id
+               Dict dict = this.getDictByDictCode(dictCode);
+               Long id = dict.getId();
+            //根据id和value查询
+            Dict dict1 =
+                    this.getOne(new QueryWrapper<Dict>()
+                            .eq("parent_id", id)
+                            .eq("value", value));
+            return dict1.getName();
+        }
+    }
+
+    private Dict getDictByDictCode(String dictCode) {
+        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
+        wrapper.eq("dict_code", dictCode);
+        Dict dict = baseMapper.selectOne(wrapper);
+        return dict;
     }
 }

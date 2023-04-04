@@ -27,4 +27,6 @@ public interface DictService extends IService<Dict> {
 
 
     void importData(MultipartFile file);
+
+    String getName(String dictCode, String value);
 }

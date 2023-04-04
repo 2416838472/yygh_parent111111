@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.Cacheable;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -48,5 +47,21 @@ public class DictContreoller {
         return R.ok().data("list",list);
     }
 
+    //根据dictCode和value查询
+    @ApiOperation(value = "根据dictCode和value查询")
+    @GetMapping("getName/{dictCode}/{value}")
+    public String getName(@PathVariable String dictCode,
+                          @PathVariable String value){
+        String dictName = dictService.getName(dictCode, value);
+        return dictName;
+    }
+
+    //根据value查询
+    @ApiOperation(value = "根据value查询")
+    @GetMapping("getName/{value}")
+    public String getName(@PathVariable String value){
+        String dictName = dictService.getName("", value);
+        return dictName;
+    }
 }
 

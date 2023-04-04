@@ -14,7 +14,7 @@ import com.atguigu.yygh.hosp.service.HospitalSetService;
 import com.atguigu.yygh.hosp.service.ScheduleService;
 import com.atguigu.yygh.result.Result;
 import com.atguigu.yygh.util.MD5;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.data.domain.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
