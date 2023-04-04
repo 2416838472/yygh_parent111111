@@ -5,6 +5,7 @@ import com.atguigu.model.hosp.Schedule;
 import com.atguigu.vo.hosp.BookingScheduleRuleVo;
 import com.atguigu.vo.hosp.ScheduleQueryVo;
 import com.atguigu.yygh.hosp.repository.ScheduleRepository;
+import com.atguigu.yygh.hosp.service.DepartmentService;
 import com.atguigu.yygh.hosp.service.HospitalOneService;
 import com.atguigu.yygh.hosp.service.ScheduleService;
 import org.joda.time.DateTime;
@@ -35,6 +36,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     private HospitalOneService hospitalOneService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
 
     @Override
     public void saveSchedule(Map<String, Object> parmMap) {
@@ -62,22 +66,27 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public Page<Schedule> selectPage(int page, int limit, ScheduleQueryVo scheduleQueryVo) {
+        // 按创建时间降序排序日程。
         Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
-        //0为第一页
+        // 根据给定的页码和限制设置要检索的页面。
         Pageable pageable = PageRequest.of(page-1, limit, sort);
 
+        // 创建一个新的Schedule对象，并将给定的ScheduleQueryVo对象的属性复制到它。
         Schedule schedule = new Schedule();
         BeanUtils.copyProperties(scheduleQueryVo, schedule);
+        // 将Schedule对象的isDeleted属性设置为0。
         schedule.setIsDeleted(0);
 
-        //创建匹配器
+        // 为Schedule对象创建匹配器。
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
                 .withIgnoreCase(true);
 
-        //创建实例
+        // 使用Schedule对象和匹配器创建一个Example对象。
         Example<Schedule> example = Example.of(schedule, matcher);
+        // 检索与Example对象和pageable匹配的日程页面。
         Page<Schedule> pages = scheduleRepository.findAll(example, pageable);
+        // 返回检索到的日程页面。
         return pages;
     }
 
@@ -140,6 +149,26 @@ public class ScheduleServiceImpl implements ScheduleService {
         baseMap.put("baseMap", baseMap);
         //返回结果
         return result;
+    }
+
+    //根据医院编号，科室编号，工作日期，排班编号查询排班详细信息
+    @Override
+    public List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate) {
+        List<Schedule> scheduleList =  scheduleRepository.getScheduleDetail(hoscode, depcode, new DateTime(workDate).toDate());
+        scheduleList.stream().forEach(item -> {
+            this.packageSchedule(item);
+        });
+        return scheduleList;
+    }
+
+    //根据排班id获取排班数据
+    private void packageSchedule(Schedule schedule) {
+        //设置医院名称
+        schedule.getParam().put("hosname", hospitalOneService.getHospName(schedule.getHoscode()));
+        //设置科室名称
+        schedule.getParam().put("depname", departmentService.getDepName(schedule.getHoscode(), schedule.getDepcode()));
+        //设置日期对应星期
+        schedule.getParam().put("dayOfWeek", this.getDayOfWeek(new DateTime(schedule.getWorkDate())));
     }
 
     private String getDayOfWeek(DateTime dateTime){

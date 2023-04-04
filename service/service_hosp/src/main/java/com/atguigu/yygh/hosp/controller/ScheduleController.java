@@ -6,17 +6,14 @@ import com.atguigu.yygh.hosp.service.ScheduleService;
 import com.atguigu.yygh.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/hosp/schedule")
-@CrossOrigin
+//@CrossOrigin
 public class ScheduleController {
 
     @Autowired
@@ -34,4 +31,13 @@ public class ScheduleController {
         return Result.ok(pageModel);
     }
 
+    // 根据医院编号、科室编号、工作日期，查询排班详细信息
+    @ApiOperation(value = "根据医院编号、科室编号、工作日期，查询排班详细信息")
+    @GetMapping("getScheduleDetail/{hoscode}/{depcode}/{workDate}")
+    public Result getScheduleDetail(@PathVariable String hoscode,
+                                    @PathVariable String depcode,
+                                    @PathVariable String workDate) {
+        List<Schedule> list = scheduleService.getScheduleDetail(hoscode, depcode, workDate);
+        return Result.ok(list);
+    }
 }
