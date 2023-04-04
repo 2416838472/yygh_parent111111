@@ -3,6 +3,7 @@ package com.atguigu.yygh.hosp.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.model.hosp.Department;
 import com.atguigu.vo.hosp.DepartmentQueryVo;
+import com.atguigu.vo.hosp.DepartmentVo;
 import com.atguigu.yygh.hosp.repository.DepartmentRepository;
 import com.atguigu.yygh.hosp.service.DepartmentService;
 import org.springframework.beans.BeanUtils;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -76,5 +79,45 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (department != null) {
             departmentRepository.deleteById(department.getId());
         }
+    }
+
+    //根据医院编号，查询医院所有科室
+    @Override
+    public List<DepartmentVo> findDeptTree(String hoscode) {
+        //创建list集合，用于存储最终封装数据
+        List<DepartmentVo> result = new ArrayList<>();
+        //根据医院编号，查询所有科室
+        Department departmentQuery = new Department();
+        departmentQuery.setHoscode(hoscode);
+        Example<Department> example = Example.of(departmentQuery);
+        List<Department> all = departmentRepository.findAll(example);
+        //遍历所有科室list集合，封装数据
+        for (Department department : all) {
+            //判断是否是一级科室
+            if (department.getDepcode().equals(department.getHoscode())) {
+                DepartmentVo departmentVo = new DepartmentVo();
+                departmentVo.setDepcode(department.getDepcode());
+                departmentVo.setDepname(department.getDepname());
+                result.add(departmentVo);
+            }
+        }
+        //封装二级科室
+        //遍历一级科室
+        for (DepartmentVo departmentVo : result) {
+            List<DepartmentVo> children = new ArrayList<>();
+            //遍历所有科室
+            for (Department department : all) {
+                //判断二级科室的hoscode和depcode是否和一级科室的hoscode和depcode相同
+                if (departmentVo.getDepcode().equals(department.getHoscode()) &&
+                        !departmentVo.getDepcode().equals(department.getDepcode())) {
+                    DepartmentVo child = new DepartmentVo();
+                    child.setDepcode(department.getDepcode());
+                    child.setDepname(department.getDepname());
+                    children.add(child);
+                }
+            }
+            departmentVo.setChildren(children);
+        }
+        return result;
     }
 }

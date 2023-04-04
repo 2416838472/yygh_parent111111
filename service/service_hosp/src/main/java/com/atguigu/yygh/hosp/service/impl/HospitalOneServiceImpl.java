@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +94,51 @@ public class HospitalOneServiceImpl implements HospitalOneService {
         return all;
     }
 
+    //更新医院上线状态
+    @Override
+    public void updateStatus(String id, Integer status) {
+        //根据id查询医院信息
+        Hospital hospital = hospitalRepository.findById(id).get();
+        //设置医院状态
+        hospital.setStatus(status);
+        //更新医院信息
+        hospitalRepository.save(hospital);
+    }
+
+    //医院详情信息
+    @Override
+    public Map<String, Object> getHospById(String id) {
+        Map<String,Object> result = new HashMap<>();
+        Hospital hospital = this.setHospitalHosType(hospitalRepository.findById(id).get());
+        result.put("hospital",hospital);
+        result.put("bookingRule",hospital.getBookingRule());
+
+        hospital.setBookingRule(null);
+
+        return result;
+
+    }
+
+    //获取医院名称
+    @Override
+    public String getHospName(String hoscode) {
+        Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
+        if (hospital != null) {
+            return hospital.getHosname();
+        }
+        return null;
+    }
 
 
+    private Hospital setHospitalHosType(Hospital hospital) {
+        String hostype = dictFeignClient.getName("Hostype", hospital.getHostype());
+        String name = dictFeignClient.getName(hospital.getProvinceCode());
+        String name1 = dictFeignClient.getName(hospital.getCityCode());
+        String name2 = dictFeignClient.getName(hospital.getDistrictCode());
+
+        hospital.getParam().put("fullAddress", name + name1 + name2);
+        hospital.getParam().put("hostypeString", hostype);
+        return hospital;
+
+    }
 }

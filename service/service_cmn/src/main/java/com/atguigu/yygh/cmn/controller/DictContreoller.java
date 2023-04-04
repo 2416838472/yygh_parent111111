@@ -63,5 +63,13 @@ public class DictContreoller {
         String dictName = dictService.getName("", value);
         return dictName;
     }
+
+    //根据dictCode获取下级节点
+    @ApiOperation(value = "根据dictCode获取下级节点")
+    @GetMapping("findByDictCode/{dictCode}")
+    public R findByDictCode(@PathVariable String dictCode){
+        List<Dict> list = dictService.findByDictCode(dictCode);
+        return R.ok().data("list",list);
+    }
 }
 

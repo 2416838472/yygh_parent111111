@@ -14,10 +14,10 @@ import com.atguigu.yygh.hosp.service.HospitalSetService;
 import com.atguigu.yygh.hosp.service.ScheduleService;
 import com.atguigu.yygh.result.Result;
 import com.atguigu.yygh.util.MD5;
-import org.springframework.data.domain.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +46,7 @@ public class HospitalOneController {
 
 
     //根据医院编号查询
+    @ApiOperation(value = "根据医院编号查询")
     @PostMapping("hospital/show")
     public Result getHosp(HttpServletRequest request) {
         Map<String, String[]> requestMap = request.getParameterMap();
@@ -69,6 +70,7 @@ public class HospitalOneController {
 
 
     //上传医院接口
+    @ApiOperation(value = "上传医院接口")
     @PostMapping("saveHospital")
     public Result saveHosp(HttpServletRequest request) {
         Map<String, String[]> requestMap = request.getParameterMap();
@@ -100,6 +102,7 @@ public class HospitalOneController {
 
 
     //上传科室接口
+    @ApiOperation(value = "上传科室接口")
     @PostMapping("saveDepartment")
     public Result saveDepartment(HttpServletRequest request) {
         Map<String, String[]> requestMap = request.getParameterMap();
@@ -158,6 +161,7 @@ public class HospitalOneController {
     }
 
     //上传排班接口
+    @ApiOperation(value = "上传排班接口")
     @PostMapping("saveSchedule")
     public Result saveSchedule(HttpServletRequest request) {
         Map<String, String[]> requestMap = request.getParameterMap();
@@ -180,6 +184,7 @@ public class HospitalOneController {
     }
 
     //查询排班接口
+    @ApiOperation(value = "查询排班接口")
     @PostMapping("schedule/list")
     public Result findSchedule(HttpServletRequest request) {
         Map<String, Object> parmMap = HttpRequestHelper.switchMap(request.getParameterMap());
@@ -201,6 +206,7 @@ public class HospitalOneController {
 
 
     //删除排班
+    @ApiOperation(value = "删除排班")
     @PostMapping("schedule/remove")
     public Result removeSchedule(HttpServletRequest request) {
         Map<String, Object> parmMap = HttpRequestHelper.switchMap(request.getParameterMap());
@@ -213,6 +219,5 @@ public class HospitalOneController {
         saveSchedule.remove(hoscode, hosScheduleId);
         return Result.ok();
     }
-
 }
 

@@ -41,6 +41,7 @@ public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper, Hospi
     }
 
     @Override
+
     public HospitalSet getByHoscode(String hoscode) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("hoscode", hoscode);
