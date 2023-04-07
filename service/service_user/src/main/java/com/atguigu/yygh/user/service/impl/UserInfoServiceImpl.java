@@ -9,11 +9,13 @@ import com.atguigu.yygh.user.service.UserInfoService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
 
     @Autowired
@@ -31,11 +33,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
         //2、校验校验验证码 TODO
 
-        //**手机号+验证码登录逻辑**
+        //手机号+验证码登录逻辑
         //3、检查手机号是否已被使用
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("phone", phone);
-        UserInfo userInfo = userInfoMapper.selectOne(wrapper);
+
+        UserInfo userInfo = userInfoMapper
+                .selectOne(new QueryWrapper<UserInfo>()
+                        .eq("phone", phone));
 
         if(null == userInfo) {
             //4、如果手机号未被使用，根据手机号创建用户
@@ -63,7 +66,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         String token = JwtHelper.createToken(userInfo.getId(), name);
         map.put("token",token);
         map.put("name", name);
-        map.put("token", userInfo.getId());
         return map;
     }
 }

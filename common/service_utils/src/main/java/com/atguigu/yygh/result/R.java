@@ -1,12 +1,14 @@
 package com.atguigu.yygh.result;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
 public class R {
 
     @ApiModelProperty(value = "是否成功")

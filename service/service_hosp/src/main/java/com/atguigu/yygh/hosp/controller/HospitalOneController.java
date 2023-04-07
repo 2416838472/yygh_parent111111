@@ -33,7 +33,7 @@ import java.util.Map;
 
 @Api(tags = "医院管理接口")
 @Controller
-@RequestMapping("api/hosp")
+@RequestMapping("/admin/hosp")
 public class HospitalOneController {
 
 
@@ -224,14 +224,6 @@ public class HospitalOneController {
         return Result.ok();
     }
 
-    //根据医院名称查询
-    @ApiOperation(value = "根据医院名称查询")
-    @GetMapping("findByHosname/{hosname}")
-    public Result findByHosname(@PathVariable String hosname) {
-        List<Hospital> list = hospitalOneService.findByHosname(hosname);
-        return Result.ok(list);
-    }
-
 
     //根据医院编号获取科室
     @ApiOperation(value = "根据医院编号获取科室")
@@ -240,67 +232,5 @@ public class HospitalOneController {
         List<DepartmentVo> list = departmentService.findDeptTree(hoscode);
         return Result.ok(list);
     }
-
-    //根据医院编号获取医院预约挂号详情
-    @ApiOperation(value = "根据医院编号获取医院预约挂号详情")
-    @GetMapping("findHospDetail/{hoscode}")
-    public Result item(@PathVariable String hoscode) {
-        Map<String, Object> map = hospitalOneService.item(hoscode);
-        return Result.ok(map);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 

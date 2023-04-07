@@ -5,10 +5,7 @@ import com.atguigu.yygh.cmn.service.DictService;
 import com.atguigu.yygh.result.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -23,17 +20,19 @@ public class DictContreoller {
     @Resource
     private DictService dictService;
 
+
+
+
     //导出数据字典接口
     @ApiOperation(value = "导出数据字典")
     @GetMapping("exportData")
-    public R exportData(HttpServletResponse response){
+    public void exportData(HttpServletResponse response){
         dictService.exportData(response);
-        return R.ok();
     }
 
     //导入数据字典接口
     @ApiOperation(value = "导入数据字典")
-    @GetMapping("importData")
+    @PostMapping("importData")
     public R importData(MultipartFile file){
         dictService.importData(file);
         return R.ok();

@@ -12,10 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DictListener extends AnalysisEventListener<DictEeVo> {
 
+    @Autowired
     private DictMapper dictMapper;
-    public DictListener(DictMapper dictMapper) {
-        this.dictMapper = dictMapper;
-    }
 
     //一行一行读取
     @Override

@@ -8,6 +8,7 @@ import com.atguigu.yygh.cmn.mapper.DictMapper;
 import com.atguigu.yygh.cmn.service.DictService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,42 +32,48 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Resource
     private DictMapper dictMapper;
 
+    @Resource
+    private DictListener dictListener;
 
+
+    // TODO 问题
     @Override
-    @Cacheable(value = "dict", key = "keyGenerator")
+    @Cacheable(value = "dict")
     public List<Dict> findChildData(Long id) {
-        return dictMapper.findChildData(id);
+        List<Dict> childData = dictMapper.findChildData(id);
+        childData.forEach(dict -> {
+            boolean isChildren = this.hasChildren(dict.getId());
+            dict.setHasChildren(isChildren);
+        });
+        return childData;
+    }
+
+    //根据dictCode获取下级节点
+    private boolean hasChildren(Long id) {
+        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
+        wrapper.eq("parent_id", id);
+        Integer count = baseMapper.selectCount(wrapper);
+        return count > 0;
     }
 
     @Override
     public void exportData(HttpServletResponse response) {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        String fileName = null;
         try {
-            fileName = URLEncoder.encode("数据字典", "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-        List<Dict> list = dictMapper.selectList(null);
-        List<DictEeVo> dictEeVos = new ArrayList<>();
-        for (Dict dict : list) {
-            DictEeVo dictEeVo = new DictEeVo();
-            dictEeVo.setId(dict.getId());
-            dictEeVo.setParentId(dict.getParentId());
-            dictEeVo.setName(dict.getName());
-            dictEeVo.setValue(dict.getValue());
-            dictEeVo.setDictCode(dict.getDictCode());
-            dictEeVos.add(dictEeVo);
-        }
-        //调用方法实现写操作
-        try {
-            EasyExcel.write(response.getOutputStream(),
-                    DictEeVo.class).sheet("数据字典").doWrite(dictEeVos);
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding("utf-8");
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode("数据字典", "UTF-8");
+            response.setHeader("Content-disposition", "attachment;filename="+ fileName + ".xlsx");
+            List<Dict> dictList = baseMapper.selectList(null);
+            List<DictEeVo> dictVoList = new ArrayList<>(dictList.size());
+            for(Dict dict : dictList) {
+                DictEeVo dictVo = new DictEeVo();
+                BeanUtils.copyProperties(dict,dictVo);
+                dictVoList.add(dictVo);
+            }
+            EasyExcel.write(response.getOutputStream(), DictEeVo.class).sheet("数据字典").doWrite(dictVoList);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -77,28 +83,30 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     public void importData(MultipartFile file) {
         try {
             EasyExcel.read(file.getInputStream(),
-                    DictEeVo.class, new DictListener(baseMapper)).sheet().doRead();
+                    DictEeVo.class, dictListener).sheet().doRead();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
+
 
     @Override
     public String getName(String dictCode, String value) {
         //如果dictCode为空，直接根据value查询
         if(StringUtils.isEmpty(dictCode)){
             Dict dict =
-                    this.getOne(new QueryWrapper<Dict>()
+                    dictMapper.selectOne(new QueryWrapper<Dict>()
                             .eq("value", value));
             return dict.getName();
         }else {
             //根据dictcode查询dict对象，得到dict对象的id
                Dict dict = this.getDictByDictCode(dictCode);
                Long id = dict.getId();
-            //根据id和value查询
             Dict dict1 =
-                    this.getOne(new QueryWrapper<Dict>()
+                    dictMapper.selectOne(new QueryWrapper<Dict>()
                             .eq("parent_id", id)
+                            .eq("dict_code", dictCode)
                             .eq("value", value));
             return dict1.getName();
         }

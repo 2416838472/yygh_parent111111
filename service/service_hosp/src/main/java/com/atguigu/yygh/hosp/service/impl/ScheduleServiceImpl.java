@@ -154,7 +154,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     //根据医院编号，科室编号，工作日期，排班编号查询排班详细信息
     @Override
     public List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate) {
-        List<Schedule> scheduleList =  scheduleRepository.getScheduleDetail(hoscode, depcode, new DateTime(workDate).toDate());
+        List<Schedule> scheduleList =  scheduleRepository.findByHoscodeAndDepcodeAndWorkDate(hoscode, depcode, new DateTime(workDate).toDate());
         scheduleList.stream().forEach(item -> {
             this.packageSchedule(item);
         });

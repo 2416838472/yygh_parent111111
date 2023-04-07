@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -27,7 +24,7 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     @Autowired
     private HospitalRepository hospitalRepository;
 
-    @Autowired
+//    @Autowired
     private DictFeignClient dictFeignClient;
 
 
@@ -60,9 +57,8 @@ public class HospitalOneServiceImpl implements HospitalOneService {
 
     @Override
     public Hospital getHosp(Map<String, Object> parmMap) {
-        String hoscode = (String) parmMap.get("hoscode");
-        Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
-        return hospital;
+        String hoscode11 = (String) parmMap.get("hoscode");
+        return hospitalRepository.getHospitalByHoscode(hoscode11);
     }
 
     //医院列表(条件查询分页)
@@ -99,8 +95,9 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     @Override
     public void updateStatus(String id, Integer status) {
         //根据id查询医院信息
-        Hospital hospital = hospitalRepository.findById(id).get();
+        Hospital hospital = hospitalRepository.findById(id).orElse(null);
         //设置医院状态
+        assert hospital != null;
         hospital.setStatus(status);
         //更新医院信息
         hospitalRepository.save(hospital);
@@ -110,7 +107,7 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     @Override
     public Map<String, Object> getHospById(String id) {
         Map<String,Object> result = new HashMap<>();
-        Hospital hospital = this.setHospitalHosType(hospitalRepository.findById(id).get());
+        Hospital hospital = this.setHospitalHosType(Objects.requireNonNull(hospitalRepository.findById(id).orElse(null)));
         result.put("hospital",hospital);
         result.put("bookingRule",hospital.getBookingRule());
 
