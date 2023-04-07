@@ -12,7 +12,7 @@ public interface HospitalOneService {
 
 
     //根据医院编号查询
-    Hospital getHosp(Map<String, Object> parmMap);
+    Hospital getHosp(String hoscode);
 
 
     //医院列表(条件查询分页)

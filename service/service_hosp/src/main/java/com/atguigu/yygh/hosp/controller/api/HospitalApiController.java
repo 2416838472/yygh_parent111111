@@ -9,10 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -30,19 +27,19 @@ public class HospitalApiController {
                    @PathVariable Integer limit,
                    HospitalQueryVo hospitalQueryVo) {
         Page<Hospital> pageModel = hospitalService.selectHospPage(page, limit, hospitalQueryVo);
-        return R.ok().data("pages",pageModel);
+        return R.ok().data("pages", pageModel);
     }
 
     @ApiOperation(value = "根据医院名称获取医院列表")
     @GetMapping("findByHosname/{hosname}")
     public R findByHosname(@PathVariable String hosname) {
         List<Hospital> list = hospitalService.findByHosname(hosname);
-        return R.ok().data("list",list);
+        return R.ok().data("list", list);
     }
 
     //更新医院上线状态
     @ApiOperation(value = "更新医院上线状态")
-    @GetMapping("updateHospStatus/{id}/{status}")
+    @PutMapping("updateHospStatus/{id}/{status}")
     public Result updateHospStatus(@PathVariable String id, @PathVariable Integer status) {
         hospitalService.updateStatus(id, status);
         return Result.ok();
@@ -62,5 +59,6 @@ public class HospitalApiController {
         Map<String, Object> map = hospitalService.item(hoscode);
         return R.ok().data(map);
     }
+
 
 }

@@ -64,7 +64,7 @@ public class HospitalSetController {
         long total = pageModel.getTotal();
         //获取list集合
         List<HospitalSet> records = pageModel.getRecords();
-        return R.ok().data("total", total).data("rows", records);
+        return R.ok().data("rows", records).data("total", total);
     }
 
 

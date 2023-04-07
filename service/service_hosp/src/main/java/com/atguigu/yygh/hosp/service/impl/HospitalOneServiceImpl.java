@@ -56,9 +56,8 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     }
 
     @Override
-    public Hospital getHosp(Map<String, Object> parmMap) {
-        String hoscode11 = (String) parmMap.get("hoscode");
-        return hospitalRepository.getHospitalByHoscode(hoscode11);
+    public Hospital getHosp(String hoscode) {
+        return hospitalRepository.getHospitalByHoscode(hoscode);
     }
 
     //医院列表(条件查询分页)
@@ -95,26 +94,32 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     @Override
     public void updateStatus(String id, Integer status) {
         //根据id查询医院信息
-        Hospital hospital = hospitalRepository.findById(id).orElse(null);
-        //设置医院状态
-        assert hospital != null;
-        hospital.setStatus(status);
-        //更新医院信息
-        hospitalRepository.save(hospital);
+        Optional<Hospital> optionalHospital = hospitalRepository.findById(id);
+        if (optionalHospital.isPresent()) {
+            Hospital hospital = optionalHospital.get();
+            //设置医院状态
+            hospital.setStatus(status);
+            //更新医院信息
+            hospitalRepository.save(hospital);
+        } else {
+            throw new RuntimeException("医院不存在");
+        }
     }
 
     //医院详情信息
     @Override
     public Map<String, Object> getHospById(String id) {
         Map<String,Object> result = new HashMap<>();
-        Hospital hospital = this.setHospitalHosType(Objects.requireNonNull(hospitalRepository.findById(id).orElse(null)));
-        result.put("hospital",hospital);
-        result.put("bookingRule",hospital.getBookingRule());
+        try {
+            Hospital hospital = this.setHospitalHosType((hospitalRepository.findById(id).get()));
+            result.put("hospital",hospital);
+            result.put("bookingRule",hospital.getBookingRule());
 
-        hospital.setBookingRule(null);
-
+            hospital.setBookingRule(null);
+        } catch (NoSuchElementException e) {
+            result.put("error", "找不到id为" + id + "的医院");
+        }
         return result;
-
     }
 
     //获取医院名称
@@ -137,8 +142,14 @@ public class HospitalOneServiceImpl implements HospitalOneService {
         return hospitalRepository.findHospitalByHosnameLike(hosname);
     }
 
+    //根据医院编号获取医院预约挂号详情
     @Override
     public Map<String, Object> item(String hoscode) {
+        return getHospitalDetail(hoscode);
+    }
+
+    //获取医院详情
+    private Map<String, Object> getHospitalDetail(String hoscode) {
         Map<String,Object> result = new HashMap<>();
         Hospital hospital = this.setHospitalHosType(hospitalRepository.getHospitalByHoscode(hoscode));
         result.put("hospital",hospital);
@@ -148,6 +159,7 @@ public class HospitalOneServiceImpl implements HospitalOneService {
 
         return result;
     }
+
 
     private Hospital setHospitalHosType(Hospital hospital) {
         String hostype = dictFeignClient.getName("Hostype", hospital.getHostype());
