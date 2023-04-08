@@ -50,12 +50,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         Schedule scheduleExist =
                 scheduleRepository.getScheduleByHoscodeAndDepcode(parmMap.get("hoscode").toString(), parmMap.get("depcode").toString());
         // 2.判断
-        if(scheduleExist != null){
+        if (scheduleExist != null) {
             scheduleExist.setUpdateTime(new Date());
             scheduleExist.setIsDeleted(0);
             scheduleExist.setStatus(1);
             scheduleRepository.save(scheduleExist);
-        }else {
+        } else {
             scheduleExist.setCreateTime(new Date());
             scheduleExist.setUpdateTime(new Date());
             scheduleExist.setIsDeleted(0);
@@ -69,13 +69,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         // 按创建时间降序排序日程。
         Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
         // 根据给定的页码和限制设置要检索的页面。
-        Pageable pageable = PageRequest.of(page-1, limit, sort);
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
 
         // 创建一个新的Schedule对象，并将给定的ScheduleQueryVo对象的属性复制到它。
         Schedule schedule = new Schedule();
         BeanUtils.copyProperties(scheduleQueryVo, schedule);
         // 将Schedule对象的isDeleted属性设置为0。
-        schedule.setIsDeleted(0);
+        //schedule.setIsDeleted(0);
 
         // 为Schedule对象创建匹配器。
         ExampleMatcher matcher = ExampleMatcher.matching()
@@ -86,6 +86,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Example<Schedule> example = Example.of(schedule, matcher);
         // 检索与Example对象和pageable匹配的日程页面。
         Page<Schedule> pages = scheduleRepository.findAll(example, pageable);
+
         // 返回检索到的日程页面。
         return pages;
     }
@@ -94,28 +95,28 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void remove(String hoscode, String hosScheduleId) {
         Schedule schedule = scheduleRepository.getScheduleByHoscodeAndHosScheduleId(hoscode, hosScheduleId);
-        if(schedule != null){
+        if (schedule != null) {
             scheduleRepository.deleteById(schedule.getId());
         }
     }
 
     //根据医院编号，科室编号，工作日期查询排班规则数据
     @Override
-    public Map<String,Object> findScheduleRule(Long page, Long limit, String hoscode, String depcode) {
+    public Map<String, Object> findScheduleRule(Long page, Long limit, String hoscode, String depcode) {
         //根据医院编号和科室编号进行查询
         Criteria criteria = Criteria.where("hoscode").is(hoscode).and("depcode").is(depcode);
         //根据工作日期进行分组
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(criteria),
                 Aggregation.group("workDate").first("workDate").as("workDate")
-                                .count().as("docCount")
-                                .sum("reservedNumber").as("reservedNumber")
-                                .sum("availableNumber").as("availableNumber"),
+                        .count().as("docCount")
+                        .sum("reservedNumber").as("reservedNumber")
+                        .sum("availableNumber").as("availableNumber"),
                 Aggregation.project("workDate").andExclude("_id"),
                 //排序
                 Aggregation.sort(Sort.Direction.DESC, "workDate"),
                 //分页
-                Aggregation.skip((page-1)*limit),
+                Aggregation.skip((page - 1) * limit),
                 Aggregation.limit(limit)
         );
         //执行聚合查询
@@ -154,7 +155,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     //根据医院编号，科室编号，工作日期，排班编号查询排班详细信息
     @Override
     public List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate) {
-        List<Schedule> scheduleList =  scheduleRepository.findByHoscodeAndDepcodeAndWorkDate(hoscode, depcode, new DateTime(workDate).toDate());
+        List<Schedule> scheduleList = scheduleRepository.findByHoscodeAndDepcodeAndWorkDate(hoscode, depcode, new DateTime(workDate).toDate());
         scheduleList.stream().forEach(item -> {
             this.packageSchedule(item);
         });
@@ -171,9 +172,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.getParam().put("dayOfWeek", this.getDayOfWeek(new DateTime(schedule.getWorkDate())));
     }
 
-    private String getDayOfWeek(DateTime dateTime){
+    private String getDayOfWeek(DateTime dateTime) {
         String week = "";
-        switch (dateTime.getDayOfWeek()){
+        switch (dateTime.getDayOfWeek()) {
             case DateTimeConstants.MONDAY:
                 week = "星期一";
                 break;
@@ -199,5 +200,35 @@ public class ScheduleServiceImpl implements ScheduleService {
         return week;
     }
 
+    //上传排班
 
+
+    @Override
+    public void save(Map<String, Object> paramMap) {
+        //1、paramMap转换department对象
+        String paramMapString = JSONObject.toJSONString(paramMap);
+        Schedule schedule = JSONObject.parseObject(paramMapString, Schedule.class);
+
+        String hoscode = schedule.getHoscode();
+        String HosScheduleId = schedule.getHosScheduleId();//医院端排班id
+
+        //2、根据医院编号 和 排班编号查询
+        Schedule scheduleExist = scheduleRepository
+                .getScheduleByHoscodeAndHosScheduleId(hoscode, HosScheduleId);
+
+        //判断
+        if (scheduleExist != null) {
+            scheduleExist.setUpdateTime(new Date());
+            scheduleExist.setIsDeleted(0);
+            scheduleExist.setStatus(1);
+            scheduleRepository.save(scheduleExist);
+        } else {
+            schedule.setCreateTime(new Date());
+            schedule.setUpdateTime(new Date());
+            schedule.setIsDeleted(0);
+            schedule.setStatus(1);
+            scheduleRepository.save(schedule);
+        }
+    }
 }
+

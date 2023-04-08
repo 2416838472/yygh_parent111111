@@ -44,4 +44,4 @@ spring:
     time-zone: GMT+8
   data:
     mongodb:
-      uri: mongodb://192.168.9.100:27017/yygh
+      uri: mongodb://192.168.9.100:27017/yygh_hosp

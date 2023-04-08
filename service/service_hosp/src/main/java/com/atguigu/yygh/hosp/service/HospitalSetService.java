@@ -18,4 +18,6 @@ public interface HospitalSetService extends IService<HospitalSet> {
     Page<HospitalSet> selectHospPage(Page<HospitalSet> pageParam, HospitalSetQueryVo hospitalSetQueryVo);
 
     HospitalSet getByHoscode(String hoscode);
+
+    String getSignKey(String hoscode);
 }

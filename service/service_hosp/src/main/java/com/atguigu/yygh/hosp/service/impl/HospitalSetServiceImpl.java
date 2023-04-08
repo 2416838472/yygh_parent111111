@@ -1,9 +1,10 @@
 package com.atguigu.yygh.hosp.service.impl;
 
 import com.atguigu.model.hosp.HospitalSet;
+import com.atguigu.vo.hosp.HospitalSetQueryVo;
+import com.atguigu.yygh.exception.YyghException;
 import com.atguigu.yygh.hosp.mapper.HospitalSetMapper;
 import com.atguigu.yygh.hosp.service.HospitalSetService;
-import com.atguigu.vo.hosp.HospitalSetQueryVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,11 +42,19 @@ public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper, Hospi
     }
 
     @Override
-
     public HospitalSet getByHoscode(String hoscode) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("hoscode", hoscode);
         HospitalSet hospitalSet = hospitalSetMapper.selectOne(wrapper);
         return hospitalSet;
+    }
+
+    @Override
+    public String getSignKey(String hoscode) {
+        HospitalSet hospitalSet = this.getByHoscode(hoscode);
+        if(null == hospitalSet) {
+            throw new YyghException(20001,"失败");
+        }
+        return hospitalSet.getSignKey();
     }
 }

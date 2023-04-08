@@ -140,4 +140,29 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
         return null;
     }
+
+    //上传科室接口
+
+    @Override
+    public void save(Map<String, Object> paramMap) {
+        //1、paramMap变成对象
+        String jsonString = JSONObject.toJSONString(paramMap);
+        Department department = JSONObject.parseObject(jsonString, Department.class);
+
+        //2、查询科室是否存在，医院编号 + 科室编号
+        Department existsDepartment = departmentRepository.
+                findByHoscodeAndDepcode(department.getHoscode(),department.getDepcode());
+
+        //3、判断
+        if(existsDepartment != null) { //修改
+            department.setId(existsDepartment.getId());
+            department.setCreateTime(existsDepartment.getCreateTime());
+            department.setUpdateTime(new Date());
+            departmentRepository.save(department);
+        } else {
+            department.setCreateTime(new Date());
+            department.setUpdateTime(new Date());
+            departmentRepository.save(department);
+        }
+    }
 }

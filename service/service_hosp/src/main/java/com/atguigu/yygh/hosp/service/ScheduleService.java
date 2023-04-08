@@ -23,4 +23,7 @@ public interface ScheduleService {
 
     // 根据医院编号、科室编号、工作日期，查询排班详细信息
     List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate);
+
+    //上传排班
+    void save(Map<String, Object> paramMap);
 }

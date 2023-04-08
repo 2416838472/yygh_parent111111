@@ -1,19 +1,15 @@
 package com.atguigu.yygh.hosp.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.atguigu.model.hosp.Department;
 import com.atguigu.model.hosp.Hospital;
-import com.atguigu.model.hosp.HospitalSet;
 import com.atguigu.model.hosp.Schedule;
 import com.atguigu.vo.hosp.DepartmentQueryVo;
 import com.atguigu.vo.hosp.DepartmentVo;
 import com.atguigu.vo.hosp.ScheduleQueryVo;
 import com.atguigu.yygh.exception.YyghException;
-import com.atguigu.yygh.helper.HttpRequestHelper;
 import com.atguigu.yygh.hosp.service.DepartmentService;
 import com.atguigu.yygh.hosp.service.HospitalOneService;
-import com.atguigu.yygh.hosp.service.HospitalSetService;
 import com.atguigu.yygh.hosp.service.ScheduleService;
 import com.atguigu.yygh.result.Result;
 import com.atguigu.yygh.util.MD5;
@@ -22,24 +18,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
 
 @Api(tags = "医院管理接口")
-@Controller
+@RestController
 @RequestMapping("/admin/hosp")
 public class HospitalOneController {
 
 
     @Autowired
     private HospitalOneService hospitalOneService;
-    @Autowired
-    private HospitalSetService hospitalSetSvice;
 
     @Autowired
     private DepartmentService departmentService;
@@ -91,106 +83,9 @@ public class HospitalOneController {
     }
 
 
-    //上传医院接口
-    @ApiOperation(value = "上传医院接口")
-    @PostMapping("saveHospital")
-    public Result saveHosp(HttpServletRequest request) {
-//        Map<String, String[]> requestMap = request.getParameterMap();
-//        HttpRequestHelper.switchMap(requestMap);
-//        Map<String, Object> parmMap = HttpRequestHelper.switchMap(requestMap);
-//
-//        //1获取医院系统传递过来的签名
-//        String sign = (String) parmMap.get("sign");
-//        //2根据传递过来的医院编码，查询数据库，查询签名
-//        String hoscode = (String) parmMap.get("hosted");
-//
-//        String hospitalSet = String.valueOf(hospitalSetSvice.getByHoscode(hoscode));
-//        //3根据传递过来的医院编码，查询数据库，查询签名,并使用MD5加密
-//        String KeyMd5 = MD5.encrypt(hospitalSet);
-//        //4根据签名，进行签名校验
-//        if (!KeyMd5.equals(sign)) {
-//           throw  new YyghException(20001, "签名错误");
-//        }
-//
-//        //传输过程中“+”转换为了“ ”，因此我们要转换回来
-//        String logoData = (String) parmMap.get("logoData");
-//        logoData = logoData.replaceAll(" ", "+");
-//        parmMap.put("logoData", logoData);
-//
-//
-//        hospitalOneService.save(parmMap);
-//        return Result.ok();
-        Map<String, String[]> requestMap = request.getParameterMap();
-        HttpRequestHelper.switchMap(requestMap);
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requestMap);
-
-        // 从医院系统传递的参数中获取签名
-        String sign = (String) paramMap.get("sign");
-        // 根据传递的医院编码查询数据库获取签名
-        String hoscode = (String) paramMap.get("hoscode");
-        HospitalSet hospitalSet = hospitalSetSvice.getByHoscode(hoscode);
-        if (hospitalSet == null) {
-            throw new YyghException(20001, "医院不存在");
-        }
-        String hospitalSetStr = JSON.toJSONString(hospitalSet);
-        // 根据传递的医院编码查询数据库获取签名，并使用MD5加密
-        String keyMd5 = MD5.encrypt(hospitalSetStr);
-        // 验证签名
-        if (!keyMd5.equals(sign)) {
-            throw new YyghException(20001, "签名错误");
-        }
-
-        // 将logo数据中的"+"转换回" "
-        String logoData = (String) paramMap.get("logoData");
-        logoData = logoData.replaceAll(" ", "+");
-        paramMap.put("logoData", logoData);
-
-        hospitalOneService.save(paramMap);
-        return Result.ok();
-    }
 
 
-    //上传科室接口
-    @ApiOperation(value = "上传科室接口")
-    @PostMapping("saveDepartment")
-    public Result saveDepartment(HttpServletRequest request) {
-//        Map<String, String[]> requestMap = request.getParameterMap();
-//        Map<String, Object> parmMap = HttpRequestHelper.switchMap(requestMap);
-//
-//        //1获取医院系统传递过来的签名
-//        String sign = (String) parmMap.get("sign");
-//        //2根据传递过来的医院编码，查询数据库，查询签名
-//        String hoscode = (String) parmMap.get("hosted");
-//        String hospitalSet = String.valueOf(hospitalSetSvice.getByHoscode(hoscode));
-//        //3根据传递过来的医院编码，查询数据库，查询签名,并使用MD5加密
-//        String KeyMd5 = MD5.encrypt(hospitalSet);
-//        //4根据签名，进行签名校验
-//        if (!KeyMd5.equals(sign)) {
-//            throw new YyghException(20001, "签名错误");
-//        }
-//
-//        departmentService.saveDepartment(parmMap);
-//        return Result.ok();
-        // 获取请求参数并转换为Map
-        Map<String, Object> parmMap = HttpRequestHelper.switchMap(request.getParameterMap());
-        // 获取医院系统传递过来的签名
-        String sign = (String) parmMap.get("sign");
-        // 根据传递过来的医院编码，查询数据库，查询签名
-        String hoscode = (String) parmMap.get("hosted");
-        HospitalSet hospitalSet = hospitalSetSvice.getByHoscode(hoscode);
-        if (hospitalSet == null) {
-            throw new YyghException(20001, "医院编码不存在");
-        }
-        // 根据传递过来的医院编码，查询数据库，查询签名,并使用MD5加密
-        String keyMd5 = MD5.encrypt(hospitalSet.getSignKey());
-        // 根据签名，进行签名校验
-        if (!keyMd5.equals(sign)) {
-            throw new YyghException(20001, "签名错误");
-        }
 
-        departmentService.saveDepartment(parmMap);
-        return Result.ok();
-    }
 
     //    //分页查询科室接口
 //    @ApiOperation(value = "分页查询科室接口")
@@ -238,49 +133,7 @@ public class HospitalOneController {
         return Result.ok();
     }
 
-    //上传排班接口
-    @ApiOperation(value = "上传排班接口")
-    @PostMapping("saveSchedule")
-    public Result saveSchedule(HttpServletRequest request) {
-//        Map<String, String[]> requestMap = request.getParameterMap();
-//        Map<String, Object> parmMap = HttpRequestHelper.switchMap(requestMap);
-//
-//        //1获取医院系统传递过来的签名
-//        String sign = (String) parmMap.get("sign");
-//        //2根据传递过来的医院编码，查询数据库，查询签名
-//        String hoscode = (String) parmMap.get("hosted");
-//        String hospitalSet = String.valueOf(hospitalSetSvice.getByHoscode(hoscode));
-//        //3根据传递过来的医院编码，查询数据库，查询签名,并使用MD5加密
-//        String KeyMd5 = MD5.encrypt(hospitalSet);
-//        //4根据签名，进行签名校验
-//        if (!KeyMd5.equals(sign)) {
-//            throw new YyghException(20001, "签名错误");
-//        }
-//
-//        saveSchedule.saveSchedule(parmMap);
-//        return Result.ok();
-        try {
-            Map<String, String[]> requestMap = request.getParameterMap();
-            Map<String, Object> parmMap = HttpRequestHelper.switchMap(requestMap);
 
-            //1获取医院系统传递过来的签名
-            String sign = (String) parmMap.get("sign");
-            //2根据传递过来的医院编码，查询数据库，查询签名
-            String hoscode = (String) parmMap.get("hosted");
-            String hospitalSet = String.valueOf(hospitalSetSvice.getByHoscode(hoscode));
-            //3根据传递过来的医院编码，查询数据库，查询签名,并使用MD5加密
-            String KeyMd5 = MD5.encrypt(hospitalSet);
-            //4根据签名，进行签名校验
-            if (!KeyMd5.equals(sign)) {
-                throw new YyghException(20001, "签名错误");
-            }
-
-            saveSchedule.saveSchedule(parmMap);
-            return Result.ok();
-        } catch (Exception e) {
-            throw new YyghException(20001, "上传排班接口失败");
-        }
-    }
 
 //    //查询排班接口
 //    @ApiOperation(value = "查询排班接口")

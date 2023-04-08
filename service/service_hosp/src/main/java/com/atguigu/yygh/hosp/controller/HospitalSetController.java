@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,12 +30,14 @@ public class HospitalSetController {
     //http://localhost:8201/admin/hosp/hospitalSet/findAll
     //查询所有医院设置信息
     @ApiOperation(value = "医院设置列表")
+    @Cacheable(value = "hospitalSet")
     @GetMapping("findAll")
     public R findAllHosp() {
         //调用service方法
         List<HospitalSet> list = hospitalSetService.list();
         return R.ok().data("list", list);
-    }
+        }
+
 
 
     //医院设置删除

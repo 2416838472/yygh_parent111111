@@ -10,4 +10,5 @@ public interface DepartmentRepository extends MongoRepository<Department,String>
 
     void deleteDepartmentByHoscodeAndDepcode(String hoscode, String depcode);
 
+    Department findByHoscodeAndDepcode(String hoscode, String depcode);
 }

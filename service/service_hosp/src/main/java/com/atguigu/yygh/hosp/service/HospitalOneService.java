@@ -31,4 +31,6 @@ public interface HospitalOneService {
 
     //根据医院编号查询
     Map<String, Object> item(String hoscode);
+
+    void save1(Map<String, Object> paramMap);
 }

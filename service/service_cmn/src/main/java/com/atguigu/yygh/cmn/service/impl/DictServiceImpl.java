@@ -36,7 +36,8 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     private DictListener dictListener;
 
 
-    // TODO 问题
+    // 自己写sql 可以用key = "'selectIndexList'+#id"
+    //@Cacheable(value = "dict", key = "'selectIndexList'+#id")
     @Override
     @Cacheable(value = "dict")
     public List<Dict> findChildData(Long id) {
@@ -78,8 +79,10 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     }
 
     //导入数字字典
+    //beforeInvocation = true 代表在方法执行之前清除缓存
+    //allEntries = true 代表清除所有缓存
     @Override
-    @CacheEvict(value = "dict", allEntries = true)
+    @CacheEvict(value = "dict", beforeInvocation = true , allEntries = true)
     public void importData(MultipartFile file) {
         try {
             EasyExcel.read(file.getInputStream(),
