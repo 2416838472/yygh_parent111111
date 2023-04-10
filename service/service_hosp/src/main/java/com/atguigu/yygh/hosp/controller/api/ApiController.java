@@ -54,5 +54,5 @@ public class ApiController {
         Map<String, Object> paramMap=HttpRequestHelper.switchMap(request.getParameterMap());
         scheduleService.save(paramMap);
         return Result.ok();
-    }
+    }  
 }
