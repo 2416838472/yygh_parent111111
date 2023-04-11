@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface HospitalOneService {
-    void save(Map<String, Object> parmMap);
+
 
 
     //根据医院编号查询
@@ -32,5 +32,5 @@ public interface HospitalOneService {
     //根据医院编号查询
     Map<String, Object> item(String hoscode);
 
-    void save1(Map<String, Object> paramMap);
+    void save(Map<String, Object> paramMap);
 }

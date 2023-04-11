@@ -21,6 +21,8 @@ public class HospitalApiController {
     @Autowired
     private HospitalOneService hospitalService;
 
+
+
     @ApiOperation(value = "获取分页列表")
     @GetMapping("{page}/{limit}")
     public R index(@PathVariable Integer page,
@@ -40,9 +42,9 @@ public class HospitalApiController {
     //更新医院上线状态
     @ApiOperation(value = "更新医院上线状态")
     @PutMapping("updateHospStatus/{id}/{status}")
-    public Result updateHospStatus(@PathVariable String id, @PathVariable Integer status) {
+    public R updateHospStatus(@PathVariable String id, @PathVariable Integer status) {
         hospitalService.updateStatus(id, status);
-        return Result.ok();
+        return R.ok();
     }
 
     //医院详情信息

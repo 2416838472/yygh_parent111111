@@ -29,7 +29,7 @@ public class ApiController {
         Map<String, String[]> map = request.getParameterMap();
         //2、转换为Map<String, Object>
         Map<String, Object> paramMap = HttpRequestHelper.switchMap(map);
-        hospitalService.save1(paramMap);
+        hospitalService.save(paramMap);
         return Result.ok();
     }
 
@@ -54,5 +54,5 @@ public class ApiController {
         Map<String, Object> paramMap=HttpRequestHelper.switchMap(request.getParameterMap());
         scheduleService.save(paramMap);
         return Result.ok();
-    }  
+    }
 }

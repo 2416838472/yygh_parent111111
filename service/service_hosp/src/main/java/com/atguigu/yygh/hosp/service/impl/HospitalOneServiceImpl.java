@@ -1,9 +1,9 @@
 package com.atguigu.yygh.hosp.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.atguigu.cmn.client.DictFeignClient;
 import com.atguigu.model.hosp.Hospital;
+import com.atguigu.model.hosp.HospitalSet;
 import com.atguigu.vo.hosp.HospitalQueryVo;
 import com.atguigu.yygh.exception.YyghException;
 import com.atguigu.yygh.hosp.repository.HospitalRepository;
@@ -14,10 +14,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,36 +29,9 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     @Autowired
     private HospitalSetService hospitalSetService;
 
-//    @Autowired
+    @Autowired
     private DictFeignClient dictFeignClient;
 
-
-    @Override
-    public void save(Map<String, Object> parmMap) {
-        //把参数map集合转换对象
-        String mapString = JSONObject.toJSONString(parmMap);
-        Hospital hospital = JSONObject.parseObject(mapString, Hospital.class);
-        //判断是否存在数据
-        String hoscode = hospital.getHoscode();
-        Hospital hospitalExist = hospitalRepository.getHospitalByHoscode(hoscode);
-
-        if (hospitalExist != null) {
-            //修改
-            hospital.setStatus(hospitalExist.getStatus());
-            hospital.setCreateTime(hospitalExist.getCreateTime());
-            hospital.setUpdateTime(new Date());
-            hospital.setIsDeleted(0);
-            hospitalRepository.save(hospital);
-        } else {
-            //添加
-            hospital.setStatus(1);
-            hospital.setCreateTime(new Date());
-            hospital.setUpdateTime(new Date());
-            hospital.setIsDeleted(0);
-            hospitalRepository.save(hospital);
-        }
-
-    }
 
     @Override
     public Hospital getHosp(String hoscode) {
@@ -71,8 +41,10 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     //医院列表(条件查询分页)
     @Override
     public Page<Hospital> selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+        //分页
+        Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
         //创建pageable对象，设置当前页和每页记录数
-        PageRequest pageable = PageRequest.of(page - 1, limit);
+        PageRequest pageable = PageRequest.of(page - 1, limit, sort);
         //创建条件匹配器，即如何使用查询条件
         ExampleMatcher matcher = ExampleMatcher.matching()
                 //改变默认字符串匹配方式：模糊查询
@@ -181,7 +153,7 @@ public class HospitalOneServiceImpl implements HospitalOneService {
     }
 
     @Override
-    public void save1(Map<String, Object> paramMap) {
+    public void save(Map<String, Object> paramMap) {
         //1、获取医院端的签名（这个签名是经过md5加密）
         String sign = (String) paramMap.get("sign");
 
@@ -189,6 +161,16 @@ public class HospitalOneServiceImpl implements HospitalOneService {
         String hoscode = (String) paramMap.get("hoscode");
         if(StringUtils.isEmpty(hoscode)){
             throw new YyghException(20001,"医院编号不能为空");
+        }
+
+        HospitalSet hospitalSet = hospitalSetService.getByHoscode(hoscode);
+        if(hospitalSet == null){
+            throw new YyghException(20001,"医院编号不存在");
+        }
+
+        Integer status = hospitalSet.getStatus();
+        if(status == 0){
+            throw new YyghException(20001,"医院未签约");
         }
 
         //3、根据医院编号查询医院设置中的signKey（签名key），该签名key没有加密

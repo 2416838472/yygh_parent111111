@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -27,28 +26,26 @@ public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper, Hospi
 
     @Resource
     private HospitalSetMapper hospitalSetMapper;
+
+    //查询医院设置表所有信息
     @Override
     public Page<HospitalSet> selectHospPage(Page<HospitalSet> pageParam, HospitalSetQueryVo hospitalSetQueryVo) {
-        QueryWrapper wrapper = new QueryWrapper();
-        if(!StringUtils.isEmpty(hospitalSetQueryVo.getHosname())
-                && !StringUtils.isEmpty(hospitalSetQueryVo.getHoscode())
-        ){
-            wrapper.like("hosname", hospitalSetQueryVo.getHosname());
-            wrapper.eq("hoscode", hospitalSetQueryVo.getHoscode());
-        }
-
-        Page<HospitalSet> page = hospitalSetMapper.selectPage(pageParam, wrapper);
+        Page<HospitalSet> page = hospitalSetMapper.selectPage(pageParam, new QueryWrapper<HospitalSet>()
+                .like("hosname", hospitalSetQueryVo.getHosname())
+                .eq("hoscode", hospitalSetQueryVo.getHoscode()));
         return page;
     }
 
+
+    //根据医院编号查询
     @Override
     public HospitalSet getByHoscode(String hoscode) {
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("hoscode", hoscode);
-        HospitalSet hospitalSet = hospitalSetMapper.selectOne(wrapper);
+        HospitalSet hospitalSet = hospitalSetMapper.selectOne(new QueryWrapper<HospitalSet>()
+                .eq("hoscode", hoscode));
         return hospitalSet;
     }
 
+    //根据医院编号获取签名
     @Override
     public String getSignKey(String hoscode) {
         HospitalSet hospitalSet = this.getByHoscode(hoscode);
