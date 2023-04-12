@@ -18,4 +18,5 @@ public interface HostFeignClient {
     @ApiOperation(value = "医院预约挂号详情")
     @GetMapping("{hoscode}")
     public R item(@PathVariable(value = "hoscode") String hoscode);
+
 }

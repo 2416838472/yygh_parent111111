@@ -59,7 +59,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         Department department = new Department();
         BeanUtils.copyProperties(departmentQueryVo, department);
-        department.setIsDeleted(0);
+        //department.setIsDeleted(0);
 
         //创建匹配器
         ExampleMatcher matcher = ExampleMatcher.matching()

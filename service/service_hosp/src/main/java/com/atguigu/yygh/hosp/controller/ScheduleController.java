@@ -3,7 +3,7 @@ package com.atguigu.yygh.hosp.controller;
 
 import com.atguigu.model.hosp.Schedule;
 import com.atguigu.yygh.hosp.service.ScheduleService;
-import com.atguigu.yygh.result.Result;
+import com.atguigu.yygh.result.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +25,21 @@ public class ScheduleController {
     //根据医院编号和科室编号，查询排班规则数据
     @ApiOperation(value = "根据医院编号和科室编号，查询排班规则数据")
     @PostMapping("getScheduleRule/{page}/{limit}/{hoscode}/{depcode}")
-    public Result getScheduleRule(@PathVariable Long page,
-                                  @PathVariable Long limit,
-                                  @PathVariable String hoscode,
-                                  @PathVariable String depcode) {
+    public R getScheduleRule(@PathVariable Long page,
+                             @PathVariable Long limit,
+                             @PathVariable String hoscode,
+                             @PathVariable String depcode) {
         Map<String,Object> pageModel = scheduleService.findScheduleRule(page, limit, hoscode, depcode);
-        return Result.ok(pageModel);
+        return R.ok().data(pageModel);
     }
 
     // 根据医院编号、科室编号、工作日期，查询排班详细信息
     @ApiOperation(value = "根据医院编号、科室编号、工作日期，查询排班详细信息")
     @GetMapping("getScheduleDetail/{hoscode}/{depcode}/{workDate}")
-    public Result getScheduleDetail(@PathVariable String hoscode,
-                                    @PathVariable String depcode,
-                                    @PathVariable String workDate) {
+    public R getScheduleDetail(@PathVariable String hoscode,
+                               @PathVariable String depcode,
+                               @PathVariable String workDate){
         List<Schedule> list = scheduleService.getScheduleDetail(hoscode, depcode, workDate);
-        return Result.ok(list);
+        return R.ok().data("scheduleList", list);
     }
 }

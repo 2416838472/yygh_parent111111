@@ -1,5 +1,6 @@
 package com.atguigu.yygh.user.service.impl;
 
+import com.atguigu.enums.AuthStatusEnum;
 import com.atguigu.model.user.UserInfo;
 import com.atguigu.vo.user.LoginVo;
 import com.atguigu.yygh.exception.YyghException;
@@ -9,9 +10,11 @@ import com.atguigu.yygh.user.service.UserInfoService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,8 +22,10 @@ import java.util.Map;
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
 
     @Autowired
-
     private UserInfoMapper userInfoMapper;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Map<String, Object> login(LoginVo loginVo) {
@@ -31,11 +36,18 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             throw new YyghException(20001, "手机号或验证码为空");
         }
 
-        //2、校验校验验证码 TODO
+        //2、校验校验验证码
+        String codeFromRedis = stringRedisTemplate.opsForValue().get(phone);
 
+        if(StringUtils.isEmpty(codeFromRedis)) {
+            throw new YyghException(20001, "验证码已过期");
+        }
+
+        if (!code.equals(codeFromRedis)) {
+            throw new YyghException(20001, "验证码错误");
+        }
         //手机号+验证码登录逻辑
         //3、检查手机号是否已被使用
-
         UserInfo userInfo = userInfoMapper
                 .selectOne(new QueryWrapper<UserInfo>()
                         .eq("phone", phone));
@@ -45,8 +57,14 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             userInfo = new UserInfo();
             userInfo.setPhone(phone);
             userInfo.setName(phone);
+            userInfo.setAuthStatus(AuthStatusEnum.NO_AUTH.getStatus());
             userInfo.setStatus(1);
-            userInfoMapper.insert(userInfo);
+            userInfo.setCreateTime(new Date());
+            userInfo.setUpdateTime(new Date());
+            int insert = userInfoMapper.insert(userInfo);
+            if (insert <= 0) {
+                throw new YyghException(20001, "用户创建失败");
+            }
         }
 
         //校验是否被禁用

@@ -94,7 +94,6 @@ public class HospitalOneServiceImpl implements HospitalOneService {
             Hospital hospital = this.setHospitalHosType((hospitalRepository.findById(id).get()));
             result.put("hospital",hospital);
             result.put("bookingRule",hospital.getBookingRule());
-
             hospital.setBookingRule(null);
         } catch (NoSuchElementException e) {
             result.put("error", "找不到id为" + id + "的医院");

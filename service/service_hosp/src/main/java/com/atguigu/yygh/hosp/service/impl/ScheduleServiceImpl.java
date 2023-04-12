@@ -107,47 +107,47 @@ public class ScheduleServiceImpl implements ScheduleService {
         Criteria criteria = Criteria.where("hoscode").is(hoscode).and("depcode").is(depcode);
         //根据工作日期进行分组
         Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(criteria),
-                Aggregation.group("workDate").first("workDate").as("workDate")
-                        .count().as("docCount")
-                        .sum("reservedNumber").as("reservedNumber")
-                        .sum("availableNumber").as("availableNumber"),
-                Aggregation.project("workDate").andExclude("_id"),
+                Aggregation.match(criteria), //筛选符合条件的记录
+                Aggregation.group("workDate").first("workDate").as("workDate") //按照工作日期分组，取第一个工作日期作为工作日期
+                        .count().as("docCount") //统计医生数量
+                        .sum("reservedNumber").as("reservedNumber") //统计已预约数量
+                        .sum("availableNumber").as("availableNumber"), //统计剩余数量
+                Aggregation.project("workDate").andExclude("_id"), //只保留工作日期字段
                 //排序
-                Aggregation.sort(Sort.Direction.DESC, "workDate"),
+                Aggregation.sort(Sort.Direction.DESC, "workDate"), //按照工作日期降序排序
                 //分页
-                Aggregation.skip((page - 1) * limit),
-                Aggregation.limit(limit)
+                Aggregation.skip((page - 1) * limit), //跳过前面的记录
+                Aggregation.limit(limit) //只取指定数量的记录
         );
         //执行聚合查询
         AggregationResults<BookingScheduleRuleVo> aggregate = mongoTemplate.
                 aggregate(aggregation, Schedule.class, BookingScheduleRuleVo.class);
-        List<BookingScheduleRuleVo> mappedResults = aggregate.getMappedResults();
+        List<BookingScheduleRuleVo> mappedResults = aggregate.getMappedResults(); //获取查询结果
         //总记录数
         Aggregation countAggregation = Aggregation.newAggregation(
-                Aggregation.match(criteria),
-                Aggregation.group("workDate")
+                Aggregation.match(criteria), //筛选符合条件的记录
+                Aggregation.group("workDate") //按照工作日期分组
         );
         AggregationResults<BookingScheduleRuleVo> countAggregate = mongoTemplate.
                 aggregate(countAggregation, Schedule.class, BookingScheduleRuleVo.class);
-        int count = countAggregate.getMappedResults().size();
+        int count = countAggregate.getMappedResults().size(); //获取记录总数
         //把日期对应星期获取
         for (BookingScheduleRuleVo bookingScheduleRuleVo : mappedResults) {
             Date workDate = bookingScheduleRuleVo.getWorkDate();
-            String dayOfWeek = this.getDayOfWeek(new DateTime(workDate));
-            bookingScheduleRuleVo.setDayOfWeek(dayOfWeek);
+            String dayOfWeek = this.getDayOfWeek(new DateTime(workDate)); //获取日期对应的星期
+            bookingScheduleRuleVo.setDayOfWeek(dayOfWeek); //设置星期
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("bookingScheduleRuleList", mappedResults);
-        result.put("total", count);
+        result.put("bookingScheduleRuleList", mappedResults); //设置查询结果
+        result.put("total", count); //设置记录总数
 
         //获取医院名称
         String hosname = hospitalOneService.getHospName(hoscode);
 
         Map<String, Object> baseMap = new HashMap<>();
         baseMap.put("hoscode", hoscode);
-        baseMap.put("baseMap", baseMap);
+        baseMap.put("hosname", hosname);
         //返回结果
         return result;
     }
@@ -156,9 +156,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate) {
         List<Schedule> scheduleList = scheduleRepository.findByHoscodeAndDepcodeAndWorkDate(hoscode, depcode, new DateTime(workDate).toDate());
-        scheduleList.stream().forEach(item -> {
-            this.packageSchedule(item);
-        });
+        scheduleList.forEach(this::packageSchedule);
         return scheduleList;
     }
 
@@ -201,8 +199,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     //上传排班
-
-
     @Override
     public void save(Map<String, Object> paramMap) {
         //1、paramMap转换department对象

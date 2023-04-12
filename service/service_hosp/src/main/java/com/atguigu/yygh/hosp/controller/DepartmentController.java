@@ -2,7 +2,7 @@ package com.atguigu.yygh.hosp.controller;
 
 import com.atguigu.vo.hosp.DepartmentVo;
 import com.atguigu.yygh.hosp.service.DepartmentService;
-import com.atguigu.yygh.result.Result;
+import com.atguigu.yygh.result.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ public class DepartmentController {
     // 根据医院编号，查询科室信息
     @ApiOperation(value = "查询科室信息")
     @GetMapping("findDeptTree/{hoscode}")
-    public Result findDeptTree(@PathVariable String hoscode) {
+    public R findDeptTree(@PathVariable String hoscode) {
         List<DepartmentVo> list = departmentService.findDeptTree(hoscode);
-        return Result.ok(list);
+        return R.ok().data("children", list);
     }
 }
