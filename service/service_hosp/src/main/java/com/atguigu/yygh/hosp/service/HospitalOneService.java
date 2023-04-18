@@ -33,4 +33,5 @@ public interface HospitalOneService {
     Map<String, Object> item(String hoscode);
 
     void save(Map<String, Object> paramMap);
+
 }

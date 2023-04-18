@@ -165,4 +165,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             departmentRepository.save(department);
         }
     }
+
+    @Override
+    public Department getDepartment(String hoscode, String depcode) {
+        return null;
+    }
 }

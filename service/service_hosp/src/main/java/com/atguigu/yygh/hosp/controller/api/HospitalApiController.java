@@ -1,8 +1,10 @@
 package com.atguigu.yygh.hosp.controller.api;
 
 import com.atguigu.model.hosp.Hospital;
+import com.atguigu.model.hosp.Schedule;
 import com.atguigu.vo.hosp.HospitalQueryVo;
 import com.atguigu.yygh.hosp.service.HospitalOneService;
+import com.atguigu.yygh.hosp.service.ScheduleService;
 import com.atguigu.yygh.result.R;
 import com.atguigu.yygh.result.Result;
 import io.swagger.annotations.Api;
@@ -21,6 +23,8 @@ public class HospitalApiController {
     @Autowired
     private HospitalOneService hospitalService;
 
+    @Autowired
+    private ScheduleService scheduleService;
 
 
     @ApiOperation(value = "获取分页列表")
@@ -63,4 +67,36 @@ public class HospitalApiController {
     }
 
 
+    @ApiOperation(value = "获取可预约排班数据")
+    @GetMapping("auth/getBookingScheduleRule/{page}/{limit}/{hoscode}/{depcode}")
+    public R getBookingSchedule(
+            @PathVariable Integer page,
+            @PathVariable Integer limit,
+            @PathVariable String hoscode,
+            @PathVariable String depcode) {
+        Map<String, Object> map = scheduleService.getBookingScheduleRule(page, limit, hoscode, depcode);
+        return R.ok().data(map);
+    }
+
+    /**
+     * 选择日期，查询排班列表
+     */
+    @ApiOperation(value = "获取排班数据")
+    @GetMapping("auth/findScheduleList/{hoscode}/{depcode}/{workDate}")
+    public R findScheduleList(
+            @PathVariable String hoscode,
+            @PathVariable String depcode,
+            @PathVariable String workDate) {
+        List<Schedule> scheduleList = scheduleService.getScheduleDetail(hoscode, depcode, workDate);
+        return R.ok().data("scheduleList",scheduleList);
+    }
+
+
+    //预约挂号
+    @ApiOperation(value = "获取排班详情")
+    @GetMapping("getSchedule/{id}")
+    public R getScheduleList(@PathVariable String id) {
+        Schedule schedule = scheduleService.getById(id);
+        return R.ok().data("schedule",schedule);
+    }
 }

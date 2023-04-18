@@ -60,12 +60,7 @@ public class HospitalOneServiceImpl implements HospitalOneService {
 
         List<Hospital> content = all.getContent();
         for (Hospital hos : content) {
-            String hostypeString = dictFeignClient.getName("Hostype", hos.getHostype());
-            String provinceString = dictFeignClient.getName(hos.getProvinceCode());
-            String cityString = dictFeignClient.getName(hos.getCityCode());
-            String districtString = dictFeignClient.getName(hos.getDistrictCode());
-            hos.getParam().put("fullAddress", provinceString + cityString + districtString);
-            hos.getParam().put("hostypeString", hostypeString);
+              this.setHospitalHosType(hos);
         }
         return all;
     }
@@ -141,13 +136,12 @@ public class HospitalOneServiceImpl implements HospitalOneService {
 
 
     private Hospital setHospitalHosType(Hospital hospital) {
-        String hostype = dictFeignClient.getName("Hostype", hospital.getHostype());
-        String name = dictFeignClient.getName(hospital.getProvinceCode());
-        String name1 = dictFeignClient.getName(hospital.getCityCode());
-        String name2 = dictFeignClient.getName(hospital.getDistrictCode());
-
-        hospital.getParam().put("fullAddress", name + name1 + name2);
-        hospital.getParam().put("hostypeString", hostype);
+        String hostypeString = dictFeignClient.getName("Hostype", hospital.getHostype());
+        String provinceString = dictFeignClient.getName(hospital.getProvinceCode());
+        String cityString = dictFeignClient.getName(hospital.getCityCode());
+        String districtString = dictFeignClient.getName(hospital.getDistrictCode());
+        hospital.getParam().put("fullAddress", provinceString + cityString + districtString);
+        hospital.getParam().put("hostypeString", hostypeString);
         return hospital;
     }
 

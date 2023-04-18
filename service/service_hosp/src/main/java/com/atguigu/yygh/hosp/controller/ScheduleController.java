@@ -2,6 +2,7 @@ package com.atguigu.yygh.hosp.controller;
 
 
 import com.atguigu.model.hosp.Schedule;
+import com.atguigu.vo.hosp.ScheduleOrderVo;
 import com.atguigu.yygh.hosp.service.ScheduleService;
 import com.atguigu.yygh.result.R;
 import io.swagger.annotations.Api;
@@ -42,4 +43,11 @@ public class ScheduleController {
         List<Schedule> list = scheduleService.getScheduleDetail(hoscode, depcode, workDate);
         return R.ok().data("scheduleList", list);
     }
+
+    @ApiOperation(value = "根据排班id获取预约下单数据")
+    @GetMapping("inner/getScheduleOrderVo/{scheduleId}")
+    public ScheduleOrderVo getScheduleOrderVo(@PathVariable("scheduleId") String scheduleId){
+        return scheduleService.getScheduleOrderVo(scheduleId);
+    }
+
 }

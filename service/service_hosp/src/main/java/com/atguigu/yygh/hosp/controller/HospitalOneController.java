@@ -40,28 +40,6 @@ public class HospitalOneController {
     private ScheduleService saveSchedule;
 
 
-//    //根据医院编号查询
-//    @ApiOperation(value = "根据医院编号查询")
-//    @PostMapping("hospital/show")
-//    public Result getHosp(HttpServletRequest request) {
-//        Map<String, String[]> requestMap = request.getParameterMap();
-//        Map<String, Object> parmMap = HttpRequestHelper.switchMap(requestMap);
-//        // 获取医院编号
-//        String hoscode = (String) parmMap.get("hoscode");
-//        // 获取签名
-//        String sign = (String) parmMap.get("sign");
-//        // 根据医院编号查询数据库，查询签名
-//        String hospitalSet = String.valueOf(hospitalSetSvice.getByHoscode(hoscode));
-//        // 根据医院编号查询数据库，查询签名,并使用MD5加密
-//        String KeyMd5 = MD5.encrypt(hospitalSet);
-//        // 根据签名，进行比较
-//        if (!KeyMd5.equals(sign)) {
-//            throw new YyghException(20001, "签名错误");
-//        }
-//        // 调用service方法
-//        Hospital hospital = hospitalOneService.getHosp(parmMap);
-//        return Result.ok(hospital);
-//    }
 
     //根据医院编号查询
     @ApiOperation(value = "根据医院编号查询")
@@ -84,29 +62,6 @@ public class HospitalOneController {
 
 
 
-
-
-
-    //    //分页查询科室接口
-//    @ApiOperation(value = "分页查询科室接口")
-//    @PostMapping("department/list")
-//    public Result findDepartment(HttpServletRequest request) {
-//        Map<String, Object> parmMap = HttpRequestHelper.switchMap(request.getParameterMap());
-//        //参数校验
-//        String hoscode = (String) parmMap.get("hoscode");
-//        String depcode = (String) parmMap.get("depcode");
-//        if (hoscode == null || depcode == null) {
-//            throw new YyghException(200004, "参数为空");
-//        }
-//        int page = StringUtils.isEmpty(parmMap.get("page")) ? 1 : Integer.parseInt((String) parmMap.get("page"));
-//        int limit = StringUtils.isEmpty(parmMap.get("limit")) ? 1 : Integer.parseInt((String) parmMap.get("limit"));
-//
-//        DepartmentQueryVo departmentQueryVo = new DepartmentQueryVo();
-//        departmentQueryVo.setHoscode(hoscode);
-//        departmentQueryVo.setDepcode(depcode);
-//        Page<Department> pageModel = departmentService.selectPage(page, limit, departmentQueryVo);
-//        return Result.ok(pageModel);
-//    }
     //分页查询科室接口
     @ApiOperation(value = "分页查询科室接口")
     @PostMapping("department/list")
@@ -134,27 +89,6 @@ public class HospitalOneController {
     }
 
 
-
-//    //查询排班接口
-//    @ApiOperation(value = "查询排班接口")
-//    @PostMapping("schedule/list")
-//    public Result findSchedule(HttpServletRequest request) {
-//        Map<String, Object> parmMap = HttpRequestHelper.switchMap(request.getParameterMap());
-//        //参数校验
-//        String hoscode = (String) parmMap.get("hoscode");
-//        String depcode = (String) parmMap.get("depcode");
-//        if (hoscode == null || depcode == null) {
-//            throw new YyghException(200004, "参数为空");
-//        }
-//        int page = StringUtils.isEmpty(parmMap.get("page")) ? 1 : Integer.parseInt((String) parmMap.get("page"));
-//        int limit = StringUtils.isEmpty(parmMap.get("limit")) ? 1 : Integer.parseInt((String) parmMap.get("limit"));
-//
-//        ScheduleQueryVo scheduleQueryVo = new ScheduleQueryVo();
-//        scheduleQueryVo.setHoscode(hoscode);
-//        scheduleQueryVo.setDepcode(depcode);
-//        Page<Schedule> pageModel = saveSchedule.selectPage(page, limit, scheduleQueryVo);
-//        return Result.ok(pageModel);
-//    }
 
     //查询排班接口
     @ApiOperation(value = "查询排班接口")

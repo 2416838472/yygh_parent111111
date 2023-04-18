@@ -1,6 +1,8 @@
 package com.atguigu.yygh.hosp.service;
 
+import com.atguigu.model.hosp.Department;
 import com.atguigu.model.hosp.Schedule;
+import com.atguigu.vo.hosp.ScheduleOrderVo;
 import com.atguigu.vo.hosp.ScheduleQueryVo;
 import org.springframework.data.domain.Page;
 
@@ -26,4 +28,12 @@ public interface ScheduleService {
 
     //上传排班
     void save(Map<String, Object> paramMap);
+
+    Map<String, Object> getBookingScheduleRule(Integer page, Integer limit, String hoscode, String depcode);
+
+    Department getDepartment(String hoscode, String depcode);
+
+    Schedule getById(String id);
+
+    ScheduleOrderVo getScheduleOrderVo(String scheduleId);
 }
