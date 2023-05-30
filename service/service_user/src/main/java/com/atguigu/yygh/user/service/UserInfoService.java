@@ -19,4 +19,6 @@ public interface UserInfoService extends IService<UserInfo> {
     Map<String, Object> show(Long userId);
 
     void approval(Long userId, Integer authStatus);
+
+    UserInfo selectWxInfoByOpenId(String openid);
 }

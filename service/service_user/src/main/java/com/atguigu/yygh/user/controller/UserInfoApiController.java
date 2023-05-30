@@ -40,12 +40,12 @@ public class UserInfoApiController {
 
 
     //退出
+
     @ApiOperation(value = "退出登录")
     @PostMapping("logout")
     public R logout() {
         return R.ok();
     }
-
 
 
 

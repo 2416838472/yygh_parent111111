@@ -194,6 +194,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         }
     }
 
-
+    @Override
+    public UserInfo selectWxInfoByOpenId(String openid) {
+        return baseMapper.selectOne(new QueryWrapper<UserInfo>().eq("openid", openid));
+    }
 }
 
